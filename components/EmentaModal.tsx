@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { jsPDF } from 'jspdf';
 
 interface EmentaModalProps {
@@ -63,6 +63,27 @@ const modules = [
   }
 ];
 
+// --- ROBOT TUTOR COMPONENT ---
+const RobotTutor: React.FC<{ title: string; desc: string; concepts: string }> = ({ title, desc, concepts }) => (
+  <div className="bg-gradient-to-r from-blue-900/40 to-[#0b1220] p-4 rounded-xl border border-blue-500/30 flex gap-4 items-start mb-6 relative overflow-hidden shadow-lg animate-fadeIn">
+    <div className="absolute -right-4 -top-4 text-[80px] text-blue-500/10 rotate-12">
+      <i className="fas fa-robot"></i>
+    </div>
+    <div className="min-w-[50px] h-[50px] bg-blue-600/20 rounded-full flex items-center justify-center border border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.3)]">
+      <i className="fas fa-robot text-2xl text-blue-400"></i>
+    </div>
+    <div className="relative z-10">
+      <h4 className="text-blue-300 font-bold mb-1 flex items-center gap-2">
+        Tutor IA <span className="text-[10px] bg-blue-500/20 px-2 py-0.5 rounded text-blue-200 uppercase">{title}</span>
+      </h4>
+      <p className="text-sm text-gray-300 mb-2 leading-relaxed">{desc}</p>
+      <div className="text-xs text-blue-400 font-mono bg-blue-900/30 px-3 py-1.5 rounded-lg inline-flex items-center gap-2 border border-blue-500/20">
+        <i className="fas fa-code"></i> Conceitos: {concepts}
+      </div>
+    </div>
+  </div>
+);
+
 // --- MINI GAMES COMPONENTS ---
 
 const GameBMI = () => {
@@ -85,13 +106,17 @@ const GameBMI = () => {
 
   return (
     <div className="space-y-4">
+      <RobotTutor 
+        title="Calculadora IMC" 
+        desc="Olá! Neste exercício vamos usar inputs numéricos e operadores matemáticos para calcular o Índice de Massa Corporal. Preencha os dados abaixo."
+        concepts="float(), input(), operadores (/ *)"
+      />
       <div className="grid grid-cols-2 gap-4">
-        <input type="number" placeholder="Peso (kg)" value={weight} onChange={e => setWeight(e.target.value)} className="bg-white/5 p-3 rounded-lg border border-white/10 w-full" />
-        <input type="number" placeholder="Altura (m)" value={height} onChange={e => setHeight(e.target.value)} className="bg-white/5 p-3 rounded-lg border border-white/10 w-full" />
+        <input type="number" placeholder="Peso (kg)" value={weight} onChange={e => setWeight(e.target.value)} className="bg-white/5 p-3 rounded-lg border border-white/10 w-full text-white" />
+        <input type="number" placeholder="Altura (m)" value={height} onChange={e => setHeight(e.target.value)} className="bg-white/5 p-3 rounded-lg border border-white/10 w-full text-white" />
       </div>
-      <button onClick={calculate} className="w-full bg-primary text-black font-bold py-2 rounded-lg">Calcular</button>
-      {result && <div className="p-4 bg-white/10 rounded-lg text-center font-bold text-lg animate-fadeIn">{result}</div>}
-      <div className="text-xs text-muted mt-4 font-mono">Conceitos: input(), float(), operadores matemáticos (/ *)</div>
+      <button onClick={calculate} className="w-full bg-primary text-black font-bold py-2 rounded-lg hover:bg-teal-400 transition-colors">Calcular</button>
+      {result && <div className="p-4 bg-white/10 rounded-lg text-center font-bold text-lg animate-fadeIn text-white">{result}</div>}
     </div>
   );
 };
@@ -126,6 +151,11 @@ const GameGuessing = () => {
 
   return (
     <div className="space-y-4">
+      <RobotTutor 
+        title="Adivinhação" 
+        desc="Vou escolher um número aleatório. Use a lógica binária (maior/menor) para encontrar a resposta no menor número de tentativas!"
+        concepts="random, if/elif/else, loops"
+      />
       <div className="text-center p-4 bg-primary/10 rounded-xl border border-primary/20 text-primary font-bold">
         {msg}
       </div>
@@ -136,17 +166,16 @@ const GameGuessing = () => {
           onChange={e => setGuess(e.target.value)} 
           onKeyDown={e => e.key === 'Enter' && handleGuess()}
           placeholder="Seu palpite..." 
-          className="flex-1 bg-white/5 p-3 rounded-lg border border-white/10" 
+          className="flex-1 bg-white/5 p-3 rounded-lg border border-white/10 text-white" 
         />
-        <button onClick={handleGuess} className="bg-primary text-black font-bold px-6 rounded-lg">Chutar</button>
+        <button onClick={handleGuess} className="bg-primary text-black font-bold px-6 rounded-lg hover:bg-teal-400 transition-colors">Chutar</button>
       </div>
-      <div className="h-32 overflow-y-auto bg-black/20 p-2 rounded-lg">
+      <div className="h-32 overflow-y-auto bg-black/20 p-2 rounded-lg custom-scrollbar">
         <div className="text-xs text-muted mb-2">Histórico:</div>
         {history.map((h, i) => (
           <div key={i} className="text-xs text-gray-300 border-b border-white/5 py-1">{h}</div>
         ))}
       </div>
-      <div className="text-xs text-muted mt-4 font-mono">Conceitos: random, if/elif/else, loops, comparação</div>
     </div>
   );
 };
@@ -168,24 +197,28 @@ const GameTodoList = () => {
 
   return (
     <div className="space-y-4">
+      <RobotTutor 
+        title="To-Do List" 
+        desc="Vamos gerenciar uma lista de tarefas. Aprenda a adicionar (append) e remover (pop/remove) itens de uma estrutura de dados."
+        concepts="listas, métodos, índices"
+      />
       <div className="flex gap-2">
         <input 
           value={input} 
           onChange={e => setInput(e.target.value)} 
           placeholder="Nova tarefa..." 
-          className="flex-1 bg-white/5 p-3 rounded-lg border border-white/10" 
+          className="flex-1 bg-white/5 p-3 rounded-lg border border-white/10 text-white" 
         />
-        <button onClick={add} className="bg-green-600 text-white font-bold px-4 rounded-lg"><i className="fas fa-plus"></i></button>
+        <button onClick={add} className="bg-green-600 text-white font-bold px-4 rounded-lg hover:bg-green-500 transition-colors"><i className="fas fa-plus"></i></button>
       </div>
       <ul className="space-y-2">
         {tasks.map((t, i) => (
-          <li key={i} className="flex justify-between items-center bg-white/5 p-3 rounded-lg">
-            <span>{t}</span>
+          <li key={i} className="flex justify-between items-center bg-white/5 p-3 rounded-lg border border-white/5">
+            <span className="text-white">{t}</span>
             <button onClick={() => remove(i)} className="text-red-400 hover:text-red-300"><i className="fas fa-trash"></i></button>
           </li>
         ))}
       </ul>
-      <div className="text-xs text-muted mt-4 font-mono">Conceitos: listas (append/pop), indexação, manipulação de strings</div>
     </div>
   );
 };
@@ -197,9 +230,14 @@ const GameConverter = () => {
 
   return (
     <div className="space-y-4">
+      <RobotTutor 
+        title="Conversor Financeiro" 
+        desc="Use dicionários para mapear moedas e seus valores. Uma simulação real de como sistemas financeiros processam câmbio."
+        concepts="dicionários {k:v}, chaves"
+      />
       <div className="grid grid-cols-2 gap-4">
-        <input type="number" placeholder="Valor em R$" value={val} onChange={e => setVal(e.target.value)} className="bg-white/5 p-3 rounded-lg border border-white/10 w-full" />
-        <select value={curr} onChange={e => setCurr(e.target.value)} className="bg-white/5 p-3 rounded-lg border border-white/10 w-full">
+        <input type="number" placeholder="Valor em R$" value={val} onChange={e => setVal(e.target.value)} className="bg-white/5 p-3 rounded-lg border border-white/10 w-full text-white" />
+        <select value={curr} onChange={e => setCurr(e.target.value)} className="bg-white/5 p-3 rounded-lg border border-white/10 w-full text-white">
           <option value="USD">Dólar (USD)</option>
           <option value="EUR">Euro (EUR)</option>
           <option value="BTC">Bitcoin (BTC)</option>
@@ -212,7 +250,6 @@ const GameConverter = () => {
         </div>
         <div className="text-xs text-muted mt-2">Taxa: 1 {curr} = R$ {rates[curr]}</div>
       </div>
-      <div className="text-xs text-muted mt-4 font-mono">Conceitos: Dicionários (chave:valor), funções, retorno de dados</div>
     </div>
   );
 };
@@ -234,18 +271,22 @@ const GameBank = () => {
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center bg-white/10 p-4 rounded-xl">
-        <span className="text-sm">Saldo Disponível</span>
+      <RobotTutor 
+        title="Banco Simulado" 
+        desc="Programação Orientada a Objetos na prática. A classe ContaBancaria encapsula o saldo e protege contra saques inválidos."
+        concepts="Classes, Métodos, Encapsulamento"
+      />
+      <div className="flex justify-between items-center bg-white/10 p-4 rounded-xl border border-white/5">
+        <span className="text-sm text-gray-300">Saldo Disponível</span>
         <span className="text-2xl font-bold text-green-400">R$ {balance.toFixed(2)}</span>
       </div>
       <div className="grid grid-cols-2 gap-4">
-        <button onClick={() => action('deposit')} className="bg-green-600/20 hover:bg-green-600/40 text-green-400 border border-green-500/50 py-3 rounded-lg font-bold">Depositar</button>
-        <button onClick={() => action('withdraw')} className="bg-red-600/20 hover:bg-red-600/40 text-red-400 border border-red-500/50 py-3 rounded-lg font-bold">Sacar</button>
+        <button onClick={() => action('deposit')} className="bg-green-600/20 hover:bg-green-600/40 text-green-400 border border-green-500/50 py-3 rounded-lg font-bold transition-colors">Depositar</button>
+        <button onClick={() => action('withdraw')} className="bg-red-600/20 hover:bg-red-600/40 text-red-400 border border-red-500/50 py-3 rounded-lg font-bold transition-colors">Sacar</button>
       </div>
-      <div className="bg-black/30 p-3 rounded-lg h-32 overflow-y-auto font-mono text-xs">
+      <div className="bg-black/30 p-3 rounded-lg h-32 overflow-y-auto font-mono text-xs custom-scrollbar">
         {log.map((l, i) => <div key={i} className="mb-1 text-gray-300">{l}</div>)}
       </div>
-      <div className="text-xs text-muted mt-4 font-mono">Conceitos: Classes (self.saldo), Métodos (depositar, sacar), Encapsulamento</div>
     </div>
   );
 };
@@ -279,20 +320,145 @@ const GameBot = () => {
 
   return (
     <div className="space-y-4">
+       <RobotTutor 
+        title="Bot de Automação" 
+        desc="Simule um script que varre pastas, lê arquivos Excel e gera relatórios. É assim que Python economiza horas de trabalho manual."
+        concepts="bibliotecas (pandas, os), automação"
+      />
       <div className="flex justify-between items-center mb-2">
         <span className="text-xs font-bold uppercase text-muted">Status: <span className="text-primary">{status}</span></span>
-        <span className="text-xs">{progress}%</span>
+        <span className="text-xs text-white">{progress}%</span>
       </div>
       <div className="w-full bg-white/10 h-2 rounded-full overflow-hidden">
         <div className="bg-primary h-full transition-all duration-300" style={{ width: `${progress}%` }}></div>
       </div>
-      <button onClick={startBot} disabled={progress > 0 && progress < 100} className="w-full bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-bold py-3 rounded-lg">
+      <button onClick={startBot} disabled={progress > 0 && progress < 100} className="w-full bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-bold py-3 rounded-lg transition-colors">
         <i className="fas fa-robot mr-2"></i> Executar Robô
       </button>
-      <div className="bg-[#0f1720] p-3 rounded-lg h-32 overflow-y-auto font-mono text-xs border border-white/10">
+      <div className="bg-[#0f1720] p-3 rounded-lg h-32 overflow-y-auto font-mono text-xs border border-white/10 custom-scrollbar">
         {logs.map((l, i) => <div key={i} className="text-green-400 mb-1">{`>`} {l}</div>)}
       </div>
-      <div className="text-xs text-muted mt-4 font-mono">Conceitos: Bibliotecas (pandas, os), Time, Loops de processamento</div>
+    </div>
+  );
+};
+
+// --- QUIZ COMPONENT ---
+const QuizSection = () => {
+  const [current, setCurrent] = useState(0);
+  const [score, setScore] = useState(0);
+  const [showScore, setShowScore] = useState(false);
+
+  const questions = [
+    { q: "Qual o tipo de dado de: '10'?", options: ["int", "str", "float"], a: 1 },
+    { q: "Como imprimir no console?", options: ["console.log()", "echo", "print()"], a: 2 },
+    { q: "Qual símbolo inicia um comentário?", options: ["//", "#", "<!--"], a: 1 },
+    { q: "Lista é mutável?", options: ["Sim", "Não", "Depende"], a: 0 },
+    { q: "Qual biblioteca é usada para dados?", options: ["Flask", "Pandas", "PyGame"], a: 1 },
+  ];
+
+  const handleAnswer = (idx: number) => {
+    if (idx === questions[current].a) {
+      setScore(score + 1);
+    }
+    const next = current + 1;
+    if (next < questions.length) {
+      setCurrent(next);
+    } else {
+      setShowScore(true);
+    }
+  };
+
+  const reset = () => {
+    setCurrent(0);
+    setScore(0);
+    setShowScore(false);
+  };
+
+  return (
+    <div className="flex flex-col items-center justify-center h-full p-4 text-center">
+      {showScore ? (
+        <div className="bg-white/5 p-8 rounded-2xl border border-white/10 animate-fadeIn">
+          <div className="text-4xl mb-4">🏆</div>
+          <h3 className="text-2xl font-bold text-white mb-2">Quiz Finalizado!</h3>
+          <p className="text-lg text-muted mb-6">Você acertou <span className="text-primary font-bold">{score}</span> de {questions.length} questões.</p>
+          <button onClick={reset} className="px-6 py-2 bg-primary text-black font-bold rounded-lg hover:bg-teal-400">Tentar Novamente</button>
+        </div>
+      ) : (
+        <div className="w-full max-w-md bg-white/5 p-6 rounded-2xl border border-white/10 animate-fadeIn">
+          <div className="flex justify-between text-xs text-muted mb-4 uppercase tracking-wider">
+            <span>Questão {current + 1}/{questions.length}</span>
+            <span>Pontos: {score}</span>
+          </div>
+          <h3 className="text-xl font-bold text-white mb-6">{questions[current].q}</h3>
+          <div className="space-y-3">
+            {questions[current].options.map((opt, i) => (
+              <button 
+                key={i} 
+                onClick={() => handleAnswer(i)}
+                className="w-full p-3 bg-black/20 hover:bg-primary/20 hover:text-primary text-gray-300 rounded-xl border border-white/5 transition-all text-left"
+              >
+                {opt}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// --- LIBRARY COMPONENT ---
+const LibrarySection = () => {
+  const downloadPDF = (title: string, content: string) => {
+    const doc = new jsPDF();
+    doc.setFontSize(22);
+    doc.setTextColor(20, 184, 166);
+    doc.text(title, 20, 30);
+    doc.setFontSize(12);
+    doc.setTextColor(0);
+    const splitText = doc.splitTextToSize(content, 170);
+    doc.text(splitText, 20, 50);
+    doc.save(`${title.replace(/ /g, "_")}.pdf`);
+  };
+
+  const items = [
+    { 
+      title: "100 Exercícios Python", 
+      icon: "fa-dumbbell", 
+      desc: "Lista curada do básico ao avançado para treinar lógica.",
+      content: "100 Exercícios de Python\n\n1. Hello World\n2. Soma de dois números\n3. Média de notas\n4. Conversor de medidas\n5. Tabuada...\n(Conteúdo completo no curso)"
+    },
+    { 
+      title: "Guia Rápido Pandas", 
+      icon: "fa-table", 
+      desc: "Cheat sheet com os principais comandos de análise de dados.",
+      content: "Guia Pandas\n\nimport pandas as pd\n\n- pd.read_csv('file.csv')\n- df.head()\n- df.describe()\n- df.groupby('col').mean()\n..."
+    },
+    { 
+      title: "Manual Instalação Thonny", 
+      icon: "fa-laptop-code", 
+      desc: "Passo a passo para configurar seu ambiente de desenvolvimento.",
+      content: "Instalação Thonny IDE\n\n1. Acesse thonny.org\n2. Baixe a versão para seu OS\n3. Execute o instalador\n4. Abra e comece a codar!"
+    }
+  ];
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
+      {items.map((item, i) => (
+        <div key={i} className="bg-white/5 border border-white/10 p-6 rounded-2xl hover:border-primary/40 transition-all group">
+          <div className="w-12 h-12 bg-black/30 rounded-xl flex items-center justify-center text-primary text-2xl mb-4 group-hover:scale-110 transition-transform">
+            <i className={`fas ${item.icon}`}></i>
+          </div>
+          <h3 className="text-lg font-bold text-white mb-2">{item.title}</h3>
+          <p className="text-sm text-muted mb-6">{item.desc}</p>
+          <button 
+            onClick={() => downloadPDF(item.title, item.content)}
+            className="text-xs font-bold bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+          >
+            <i className="fas fa-download"></i> Baixar PDF
+          </button>
+        </div>
+      ))}
     </div>
   );
 };
@@ -300,424 +466,168 @@ const GameBot = () => {
 // --- MAIN COMPONENT ---
 
 const EmentaModal: React.FC<EmentaModalProps> = ({ isOpen, onClose }) => {
-  const [view, setView] = useState<'syllabus' | 'form' | 'success'>('syllabus');
+  const [activeTab, setActiveTab] = useState<'trilha' | 'arcade' | 'biblioteca' | 'quiz'>('trilha');
   const [activeProject, setActiveProject] = useState<number | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    level: 'iniciante'
-  });
 
-  // Reset view when modal opens
   useEffect(() => {
     if (isOpen) {
-      setView('syllabus');
+      setActiveTab('trilha');
       setActiveProject(null);
-      setFormData({ name: '', email: '', phone: '', level: 'iniciante' });
     }
   }, [isOpen]);
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    // Simulate API Call
-    setTimeout(() => {
-      setLoading(false);
-      setView('success');
-    }, 1500);
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const generatePDF = () => {
-    setIsGeneratingPdf(true);
-    
-    try {
-      const doc = new jsPDF();
-      let yPos = 20;
-
-      // Header
-      doc.setFontSize(24);
-      doc.setTextColor(20, 184, 166); // Primary Color (Teal)
-      doc.text("Python Mastery", 15, yPos);
-      
-      yPos += 10;
-      doc.setFontSize(14);
-      doc.setTextColor(100);
-      doc.text("Ementa Completa do Curso - Full Stack Python", 15, yPos);
-      
-      yPos += 10;
-      doc.setDrawColor(200);
-      doc.line(15, yPos, 195, yPos);
-      yPos += 15;
-
-      // Modules Loop
-      modules.forEach((mod) => {
-        // Check for page break
-        if (yPos > 260) {
-          doc.addPage();
-          yPos = 20;
-        }
-
-        // Module Title
-        doc.setFontSize(16);
-        doc.setTextColor(0);
-        doc.text(mod.title, 15, yPos);
-        yPos += 7;
-
-        // Level & Duration
-        doc.setFontSize(10);
-        doc.setTextColor(20, 184, 166);
-        doc.text(`${mod.level}  |  ${mod.duration}`, 15, yPos);
-        yPos += 8;
-
-        // Description
-        doc.setFontSize(11);
-        doc.setTextColor(80);
-        const splitDesc = doc.splitTextToSize(mod.desc, 180);
-        doc.text(splitDesc, 15, yPos);
-        yPos += (splitDesc.length * 6) + 4;
-
-        // Topics
-        doc.setFontSize(10);
-        doc.setTextColor(0);
-        doc.text("Tópicos:", 15, yPos);
-        yPos += 5;
-        
-        doc.setFontSize(10);
-        doc.setTextColor(60);
-        mod.topics.forEach((topic) => {
-          doc.text(`• ${topic}`, 20, yPos);
-          yPos += 5;
-        });
-        yPos += 2;
-
-        // Project
-        doc.setFontSize(10);
-        doc.setTextColor(0);
-        doc.text(`Projeto Prático: ${mod.project}`, 15, yPos);
-        yPos += 15;
-      });
-
-      // Footer
-      const pageCount = doc.getNumberOfPages();
-      for(let i = 1; i <= pageCount; i++) {
-        doc.setPage(i);
-        doc.setFontSize(8);
-        doc.setTextColor(150);
-        doc.text(`Página ${i} de ${pageCount} - Gerado por Python Mastery`, 195, 285, { align: 'right' });
-      }
-
-      doc.save("Ementa_Python_Mastery.pdf");
-    } catch (error) {
-      console.error("PDF Generation Error", error);
-      alert("Houve um erro ao gerar o PDF. Tente novamente.");
-    } finally {
-      setIsGeneratingPdf(false);
+  const renderContent = () => {
+    if (activeProject !== null) {
+      return (
+        <div className="animate-fadeIn max-w-2xl mx-auto py-4">
+          <div className="bg-[#131b29] border border-white/5 rounded-2xl p-8 shadow-2xl relative">
+            <button 
+              onClick={() => setActiveProject(null)} 
+              className="absolute top-4 right-4 text-muted hover:text-white"
+            >
+              <i className="fas fa-times"></i>
+            </button>
+            <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+               <i className="fas fa-gamepad text-secondary"></i> Arcade: Módulo {activeProject}
+            </h3>
+            <div className="bg-black/20 rounded-xl p-6 border border-white/5 mb-6">
+              {activeProject === 1 && <GameBMI />}
+              {activeProject === 2 && <GameGuessing />}
+              {activeProject === 3 && <GameTodoList />}
+              {activeProject === 4 && <GameConverter />}
+              {activeProject === 5 && <GameBank />}
+              {activeProject === 6 && <GameBot />}
+            </div>
+            <button onClick={() => setActiveProject(null)} className="text-muted hover:text-white text-sm flex items-center gap-2">
+              <i className="fas fa-arrow-left"></i> Voltar para Lista
+            </button>
+          </div>
+        </div>
+      );
     }
-  };
 
-  const renderProjectGame = () => {
-    switch (activeProject) {
-      case 1: return <GameBMI />;
-      case 2: return <GameGuessing />;
-      case 3: return <GameTodoList />;
-      case 4: return <GameConverter />;
-      case 5: return <GameBank />;
-      case 6: return <GameBot />;
-      default: return null;
+    switch (activeTab) {
+      case 'trilha':
+        return (
+          <div className="grid grid-cols-1 gap-4 animate-fadeIn">
+            {modules.map((mod) => (
+              <div key={mod.id} className="bg-white/5 border border-white/5 rounded-xl p-4 flex flex-col md:flex-row gap-4 items-start hover:bg-white/10 transition-colors">
+                <div className="w-12 h-12 rounded-lg bg-black/30 flex items-center justify-center text-primary font-bold text-lg shrink-0">
+                  {mod.id}
+                </div>
+                <div className="flex-1">
+                  <h4 className="text-white font-bold text-lg">{mod.title}</h4>
+                  <p className="text-sm text-muted mt-1 mb-2">{mod.desc}</p>
+                  <div className="flex gap-2 flex-wrap">
+                    {mod.topics.slice(0, 2).map((t, i) => (
+                       <span key={i} className="text-[10px] bg-black/20 px-2 py-1 rounded text-gray-400">{t}</span>
+                    ))}
+                    <span className="text-[10px] bg-black/20 px-2 py-1 rounded text-gray-400">+ mais</span>
+                  </div>
+                </div>
+                <div className="flex items-center">
+                   <button onClick={() => setActiveProject(mod.id)} className="px-4 py-2 bg-primary/10 text-primary border border-primary/20 rounded-lg text-sm font-bold hover:bg-primary hover:text-black transition-all">
+                      Ver Projeto
+                   </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        );
+      case 'arcade':
+        return (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 animate-fadeIn p-4">
+             {modules.map(mod => (
+               <button 
+                key={mod.id} 
+                onClick={() => setActiveProject(mod.id)}
+                className="bg-white/5 hover:bg-white/10 border border-white/10 p-6 rounded-2xl flex flex-col items-center justify-center gap-4 group transition-all"
+               >
+                 <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-500/20 to-blue-500/20 flex items-center justify-center text-2xl text-white group-hover:scale-110 transition-transform">
+                    <i className="fas fa-gamepad"></i>
+                 </div>
+                 <div className="text-center">
+                   <div className="font-bold text-white">{mod.project}</div>
+                   <div className="text-xs text-muted mt-1">{mod.level}</div>
+                 </div>
+               </button>
+             ))}
+          </div>
+        );
+      case 'biblioteca':
+        return <LibrarySection />;
+      case 'quiz':
+        return <QuizSection />;
+      default:
+        return null;
     }
   };
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-md animate-fadeIn p-4">
-      <div className="bg-[#0b1220] border border-white/10 rounded-3xl w-full max-w-4xl h-[90vh] flex flex-col shadow-2xl relative overflow-hidden transition-all duration-300">
+      <div className="bg-[#0b1220] border border-white/10 rounded-3xl w-full max-w-5xl h-[90vh] flex shadow-2xl relative overflow-hidden">
         
-        {/* Header */}
-        <div className="p-6 border-b border-white/10 flex justify-between items-center bg-[#0f1720]">
-          <div>
-            <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-              {activeProject ? (
-                 <><i className="fas fa-gamepad text-secondary"></i> Projeto Prático: Módulo {activeProject}</>
-              ) : view === 'syllabus' ? (
-                 <><i className="fas fa-book-reader text-primary"></i> Trilha de Formação Python Full Stack</>
-              ) : view === 'form' ? (
-                 <><i className="fas fa-user-plus text-primary"></i> Inscrição na Turma</>
-              ) : (
-                 <><i className="fas fa-check-circle text-green-500"></i> Inscrição Confirmada</>
-              )}
+        {/* Sidebar */}
+        <div className="w-20 md:w-64 bg-[#081018] border-r border-white/5 flex flex-col">
+          <div className="p-6 border-b border-white/5 hidden md:block">
+            <h2 className="text-lg font-bold text-white flex items-center gap-2">
+              <i className="fas fa-user-graduate text-primary"></i> Área do Aluno
             </h2>
-            <p className="text-muted text-sm mt-1">
-              {activeProject ? 'Simulação interativa do projeto final deste módulo.' :
-               view === 'syllabus' ? 'Do Zero ao Profissional em 13 semanas' : 
-               view === 'form' ? 'Garanta sua vaga para a próxima turma' : 
-               'Bem-vindo à comunidade Python Mastery'}
-            </p>
           </div>
-          <button 
-            onClick={onClose}
-            className="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-white transition-colors"
-          >
-            <i className="fas fa-times"></i>
-          </button>
-        </div>
-
-        {/* Content Body */}
-        <div className="flex-1 overflow-y-auto p-6 scrollbar-thin scrollbar-thumb-white/10 relative">
           
-          {/* VIEW: PROJECT PLAYGROUND */}
-          {activeProject !== null && (
-            <div className="animate-fadeIn max-w-2xl mx-auto">
-              <div className="bg-[#131b29] border border-white/5 rounded-2xl p-8 shadow-2xl">
-                <div className="flex justify-between items-start mb-6">
-                   <h3 className="text-xl font-bold text-white">
-                     {modules.find(m => m.id === activeProject)?.project}
-                   </h3>
-                   <div className="bg-primary/20 text-primary px-3 py-1 rounded text-xs font-bold uppercase">
-                     Interativo
-                   </div>
-                </div>
-                
-                <div className="bg-black/20 rounded-xl p-6 border border-white/5 mb-6">
-                  {renderProjectGame()}
-                </div>
+          <nav className="flex-1 p-4 space-y-2">
+             <button 
+               onClick={() => { setActiveTab('trilha'); setActiveProject(null); }}
+               className={`w-full text-left p-3 rounded-xl flex items-center gap-3 transition-colors ${activeTab === 'trilha' ? 'bg-primary text-black font-bold' : 'text-muted hover:bg-white/5 hover:text-white'}`}
+             >
+               <i className="fas fa-road w-6 text-center"></i> <span className="hidden md:block">Trilha</span>
+             </button>
+             <button 
+               onClick={() => { setActiveTab('arcade'); setActiveProject(null); }}
+               className={`w-full text-left p-3 rounded-xl flex items-center gap-3 transition-colors ${activeTab === 'arcade' ? 'bg-primary text-black font-bold' : 'text-muted hover:bg-white/5 hover:text-white'}`}
+             >
+               <i className="fas fa-gamepad w-6 text-center"></i> <span className="hidden md:block">Arcade</span>
+             </button>
+             <button 
+               onClick={() => { setActiveTab('biblioteca'); setActiveProject(null); }}
+               className={`w-full text-left p-3 rounded-xl flex items-center gap-3 transition-colors ${activeTab === 'biblioteca' ? 'bg-primary text-black font-bold' : 'text-muted hover:bg-white/5 hover:text-white'}`}
+             >
+               <i className="fas fa-book w-6 text-center"></i> <span className="hidden md:block">Biblioteca</span>
+             </button>
+             <button 
+               onClick={() => { setActiveTab('quiz'); setActiveProject(null); }}
+               className={`w-full text-left p-3 rounded-xl flex items-center gap-3 transition-colors ${activeTab === 'quiz' ? 'bg-primary text-black font-bold' : 'text-muted hover:bg-white/5 hover:text-white'}`}
+             >
+               <i className="fas fa-question-circle w-6 text-center"></i> <span className="hidden md:block">Quiz</span>
+             </button>
+          </nav>
 
-                <div className="flex justify-between items-center">
-                  <button onClick={() => setActiveProject(null)} className="text-muted hover:text-white text-sm flex items-center gap-2">
-                    <i className="fas fa-arrow-left"></i> Voltar para Ementa
-                  </button>
-                  <button className="text-primary hover:text-teal-300 text-sm font-bold">
-                    Ver Código Fonte Completo <i className="fas fa-code ml-1"></i>
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* VIEW: SYLLABUS */}
-          {view === 'syllabus' && activeProject === null && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-fadeIn">
-              {modules.map((mod) => (
-                <div key={mod.id} className="group relative bg-[#131b29] border border-white/5 rounded-2xl p-6 hover:border-primary/30 transition-all duration-300 hover:bg-[#162030]">
-                  <div className="absolute -top-3 -left-3 w-10 h-10 bg-[#0b1220] border border-primary/30 rounded-full flex items-center justify-center text-primary font-bold shadow-lg">
-                    {mod.id}
-                  </div>
-                  
-                  <div className="ml-2">
-                    <div className="flex justify-between items-start mb-2">
-                      <h3 className="text-lg font-bold text-white group-hover:text-primary transition-colors">{mod.title}</h3>
-                      <span className={`text-[10px] px-2 py-1 rounded border ${
-                        mod.level === 'Iniciante' ? 'border-green-500/20 text-green-400' :
-                        mod.level === 'Intermediário' ? 'border-yellow-500/20 text-yellow-400' :
-                        'border-purple-500/20 text-purple-400'
-                      }`}>
-                        {mod.level}
-                      </span>
-                    </div>
-                    
-                    <p className="text-sm text-gray-400 mb-4 leading-relaxed">
-                      {mod.desc}
-                    </p>
-
-                    <div className="bg-black/20 rounded-xl p-3 mb-4">
-                      <h4 className="text-xs font-bold text-gray-300 mb-2 uppercase tracking-wider">Tópicos:</h4>
-                      <ul className="grid grid-cols-1 gap-1">
-                        {mod.topics.map((topic, i) => (
-                          <li key={i} className="text-xs text-muted flex items-center gap-2">
-                            <i className="fas fa-check-circle text-[8px] text-primary/50"></i> {topic}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    <div className="flex items-center justify-between pt-3 border-t border-white/5">
-                      <div className="text-xs text-muted">
-                        <i className="far fa-clock mr-1"></i> {mod.duration}
-                      </div>
-                      <button 
-                        onClick={() => setActiveProject(mod.id)}
-                        className="text-xs font-bold text-secondary flex items-center gap-1 hover:text-white transition-colors bg-white/5 px-3 py-1.5 rounded-lg border border-white/5 hover:bg-white/10 group-hover:scale-105"
-                      >
-                        <i className="fas fa-gamepad"></i> {mod.project}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* VIEW: REGISTRATION FORM */}
-          {view === 'form' && activeProject === null && (
-            <div className="max-w-xl mx-auto animate-fadeIn">
-               <form onSubmit={handleSubmit} className="space-y-6 bg-white/5 p-8 rounded-3xl border border-white/10">
-                 
-                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="col-span-1 md:col-span-2">
-                      <label className="block text-xs font-bold text-muted uppercase mb-2">Nome Completo</label>
-                      <input 
-                        required
-                        name="name"
-                        type="text"
-                        value={formData.name}
-                        onChange={handleInputChange}
-                        placeholder="Ex: João da Silva"
-                        className="w-full bg-[#0b1220] border border-white/10 rounded-xl p-4 text-white focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/50 transition-all"
-                      />
-                    </div>
-
-                    <div className="col-span-1 md:col-span-2">
-                      <label className="block text-xs font-bold text-muted uppercase mb-2">E-mail Profissional</label>
-                      <input 
-                        required
-                        name="email"
-                        type="email"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        placeholder="seu@email.com"
-                        className="w-full bg-[#0b1220] border border-white/10 rounded-xl p-4 text-white focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/50 transition-all"
-                      />
-                    </div>
-
-                    <div className="col-span-1">
-                       <label className="block text-xs font-bold text-muted uppercase mb-2">WhatsApp (Opcional)</label>
-                       <input 
-                        name="phone"
-                        type="tel"
-                        value={formData.phone}
-                        onChange={handleInputChange}
-                        placeholder="(00) 00000-0000"
-                        className="w-full bg-[#0b1220] border border-white/10 rounded-xl p-4 text-white focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/50 transition-all"
-                      />
-                    </div>
-
-                    <div className="col-span-1">
-                       <label className="block text-xs font-bold text-muted uppercase mb-2">Nível Atual</label>
-                       <select 
-                        name="level"
-                        value={formData.level}
-                        onChange={handleInputChange}
-                        className="w-full bg-[#0b1220] border border-white/10 rounded-xl p-4 text-white focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/50 transition-all appearance-none"
-                       >
-                         <option value="iniciante">Iniciante (Nunca programei)</option>
-                         <option value="basico">Básico (Sei lógica básica)</option>
-                         <option value="intermediario">Intermediário (Já fiz scripts)</option>
-                         <option value="avancado">Avançado (Trabalho na área)</option>
-                       </select>
-                    </div>
-                 </div>
-
-                 <div className="pt-4 flex items-center gap-4">
-                   <input type="checkbox" required id="terms" className="w-4 h-4 rounded bg-white/10 border-white/20 text-primary focus:ring-0" />
-                   <label htmlFor="terms" className="text-sm text-muted">
-                     Concordo em receber materiais didáticos e atualizações sobre a turma via e-mail.
-                   </label>
-                 </div>
-
-                 <button 
-                  type="submit" 
-                  disabled={loading}
-                  className="w-full py-4 bg-primary hover:bg-teal-400 text-slate-900 font-bold rounded-xl shadow-lg shadow-teal-500/20 transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed mt-4"
-                 >
-                   {loading ? (
-                     <><i className="fas fa-circle-notch fa-spin"></i> Processando Inscrição...</>
-                   ) : (
-                     <><i className="fas fa-paper-plane"></i> Confirmar Inscrição Gratuita</>
-                   )}
-                 </button>
-               </form>
-
-               <div className="text-center mt-6 text-xs text-muted">
-                 🔒 Seus dados estão seguros. Não enviamos spam.
-               </div>
-            </div>
-          )}
-
-          {/* VIEW: SUCCESS */}
-          {view === 'success' && activeProject === null && (
-            <div className="flex flex-col items-center justify-center h-full text-center animate-fadeIn p-8">
-              <div className="w-24 h-24 bg-green-500/20 rounded-full flex items-center justify-center mb-6 border border-green-500/30">
-                <i className="fas fa-check text-4xl text-green-400"></i>
-              </div>
-              <h3 className="text-3xl font-bold text-white mb-4">Inscrição Realizada!</h3>
-              <p className="text-lg text-muted max-w-md mx-auto mb-8">
-                Parabéns, <span className="text-white font-bold">{formData.name}</span>! Você acaba de dar o primeiro passo para dominar Python.
-              </p>
-              
-              <div className="bg-white/5 p-6 rounded-2xl max-w-lg border border-white/10 text-left">
-                <h4 className="text-white font-bold mb-2 flex items-center gap-2">
-                  <i className="fas fa-envelope text-primary"></i> Próximos Passos:
-                </h4>
-                <ol className="list-decimal list-inside text-sm text-gray-300 space-y-2">
-                  <li>Verifique seu e-mail ({formData.email}) nos próximos 5 minutos.</li>
-                  <li>Clique no link de confirmação para acessar a Área do Aluno.</li>
-                  <li>Entre no nosso grupo exclusivo do Discord.</li>
-                </ol>
-              </div>
-
-              <div className="mt-8 flex gap-4">
-                <button 
-                  onClick={onClose}
-                  className="px-8 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl font-medium transition-colors"
-                >
-                  Fechar
-                </button>
-                <button className="px-8 py-3 bg-primary hover:bg-teal-400 text-slate-900 rounded-xl font-bold transition-colors shadow-lg shadow-teal-500/20">
-                  Acessar Discord Agora
-                </button>
-              </div>
-            </div>
-          )}
-
+          <div className="p-4 border-t border-white/5">
+            <button onClick={onClose} className="w-full p-3 rounded-xl border border-white/10 hover:bg-white/5 text-muted hover:text-white flex items-center justify-center gap-2 transition-colors">
+              <i className="fas fa-sign-out-alt"></i> <span className="hidden md:block">Sair</span>
+            </button>
+          </div>
         </div>
 
-        {/* Footer (Only visible on Syllabus View) */}
-        {view === 'syllabus' && activeProject === null && (
-          <div className="p-6 border-t border-white/10 bg-[#0f1720] flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="hidden md:block text-xs text-muted">
-              * Vagas limitadas para garantir a qualidade da mentoria.
-            </div>
-            <div className="flex gap-3 w-full md:w-auto">
-              <button 
-                onClick={generatePDF}
-                disabled={isGeneratingPdf}
-                className="flex-1 md:flex-none px-6 py-3 bg-white/5 hover:bg-white/10 text-white rounded-xl font-medium transition-colors border border-white/10 flex items-center justify-center gap-2 disabled:opacity-50"
-              >
-                {isGeneratingPdf ? <i className="fas fa-spinner fa-spin"></i> : <i className="fas fa-file-pdf"></i>} 
-                Baixar PDF
-              </button>
-              <button 
-                onClick={() => setView('form')}
-                className="flex-1 md:flex-none px-6 py-3 bg-primary hover:bg-teal-400 text-slate-900 rounded-xl font-bold transition-colors shadow-lg shadow-teal-900/20 flex items-center gap-2 justify-center"
-              >
-                Inscrever-se na Turma <i className="fas fa-arrow-right"></i>
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Footer (Back button for Form View) */}
-        {view === 'form' && activeProject === null && (
-          <div className="p-4 border-t border-white/10 bg-[#0f1720]">
-             <button 
-              onClick={() => setView('syllabus')}
-              className="text-muted hover:text-white text-sm flex items-center gap-2 transition-colors"
-             >
-               <i className="fas fa-arrow-left"></i> Voltar para Ementa
-             </button>
-          </div>
-        )}
+        {/* Content Area */}
+        <div className="flex-1 flex flex-col min-w-0">
+           {/* Mobile Header */}
+           <div className="md:hidden p-4 border-b border-white/5 flex justify-between items-center bg-[#081018]">
+              <span className="font-bold text-white">Área do Aluno</span>
+              <button onClick={onClose}><i className="fas fa-times text-white"></i></button>
+           </div>
+           
+           <div className="flex-1 overflow-y-auto custom-scrollbar bg-[#0f1720]">
+             {renderContent()}
+           </div>
+        </div>
 
       </div>
     </div>
   );
 };
+
 
 export default EmentaModal;

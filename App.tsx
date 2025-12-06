@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect } from 'react';
 import Navigation from './components/Navigation';
 import Hero from './components/Hero';
@@ -23,7 +21,7 @@ function App() {
   
   // Modal States
   const [isAuthOpen, setIsAuthOpen] = useState(false);
-  const [isEmentaOpen, setIsEmentaOpen] = useState(false);
+  const [isStudentAreaOpen, setIsStudentAreaOpen] = useState(false); // Renamed from isEmentaOpen
   const [isLiveClassOpen, setIsLiveClassOpen] = useState(false);
   const [isRoadmapOpen, setIsRoadmapOpen] = useState(false);
   const [isCommunityOpen, setIsCommunityOpen] = useState(false);
@@ -66,7 +64,7 @@ function App() {
       <main className="snap-container h-screen w-full">
         <Hero 
           onStart={() => scrollToSection('fundamentos')} 
-          onOpenEmenta={() => setIsEmentaOpen(true)}
+          onOpenStudentArea={() => setIsStudentAreaOpen(true)}
         />
         <Fundamentos />
         <Variaveis />
@@ -97,8 +95,8 @@ function App() {
         }}
       />
       <EmentaModal 
-        isOpen={isEmentaOpen} 
-        onClose={() => setIsEmentaOpen(false)} 
+        isOpen={isStudentAreaOpen} 
+        onClose={() => setIsStudentAreaOpen(false)} 
       />
       <LiveClassModal 
         isOpen={isLiveClassOpen}

@@ -2,10 +2,10 @@ import React from 'react';
 
 interface HeroProps {
   onStart: () => void;
-  onOpenEmenta: () => void;
+  onOpenStudentArea: () => void;
 }
 
-const Hero: React.FC<HeroProps> = ({ onStart, onOpenEmenta }) => {
+const Hero: React.FC<HeroProps> = ({ onStart, onOpenStudentArea }) => {
   return (
     <section id="hero" className="snap-section relative flex items-center justify-center pt-20 overflow-hidden">
       {/* Background Effects */}
@@ -33,10 +33,10 @@ const Hero: React.FC<HeroProps> = ({ onStart, onOpenEmenta }) => {
             <i className="fas fa-play"></i> Começar Agora
           </button>
           <button 
-            onClick={onOpenEmenta}
-            className="px-8 py-4 bg-transparent border border-white/10 hover:bg-white/5 text-white font-medium rounded-xl backdrop-blur-sm transition-all duration-200"
+            onClick={onOpenStudentArea}
+            className="px-8 py-4 bg-transparent border border-white/10 hover:bg-white/5 text-white font-medium rounded-xl backdrop-blur-sm transition-all duration-200 flex items-center gap-2"
           >
-            Ver Ementa Completa
+            <i className="fas fa-user-graduate text-primary"></i> Área do Aluno
           </button>
         </div>
       </div>
