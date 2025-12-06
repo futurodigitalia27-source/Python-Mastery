@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Python Mastery with Fole</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            bg: '#0f1720',
+            card: '#0b1220',
+            accent: '#e6fffa',
+            primary: '#14b8a6',
+            secondary: '#9be7e1',
+            muted: 'rgba(255, 255, 255, 0.6)',
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
+          },
+          animation: {
+            'float-title': 'floatText 6s ease-in-out infinite',
+            'float-slow': 'floatText 8s ease-in-out infinite',
+            'float-delayed': 'floatText 8s ease-in-out 4s infinite',
+            'fadeIn': 'fadeIn 0.5s ease-out forwards',
+          },
+          keyframes: {
+            floatText: {
+              '0%, 100%': { transform: 'translateY(0)' },
+              '50%': { transform: 'translateY(-15px)' },
+            },
+            fadeIn: {
+              '0%': { opacity: '0', transform: 'translateY(10px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Custom scrollbar for webkit */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0b1220; 
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #14b8a6; 
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #0d9488; 
+    }
+    .glass-panel {
+      background: linear-gradient(180deg, rgba(11, 18, 32, 0.8), rgba(7, 16, 26, 0.9));
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .snap-container {
+      scroll-snap-type: y mandatory;
+      overflow-y: scroll;
+      height: 100vh;
+      scroll-behavior: smooth;
+    }
+    .snap-section {
+      scroll-snap-align: start;
+      min-height: 100vh;
+    }
+  </style>
+<script type="importmap">
+{
+  "imports": {
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/",
+    "react/": "https://aistudiocdn.com/react@^19.2.1/",
+    "react": "https://aistudiocdn.com/react@^19.2.1",
+    "framer-motion": "https://aistudiocdn.com/framer-motion@^12.23.25",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.31.0",
+    "recharts": "https://aistudiocdn.com/recharts@^3.5.1",
+    "jspdf": "https://aistudiocdn.com/jspdf@^2.5.1/dist/jspdf.es.min.js"
+  }
+}
+</script>
+</head>
+<body class="bg-bg text-accent font-sans antialiased overflow-hidden selection:bg-primary selection:text-white">
+  <div id="root"></div>
+</body>
+</html>
