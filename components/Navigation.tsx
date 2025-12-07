@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { User } from '../types';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface NavigationProps {
   user: User | null;
@@ -11,15 +12,20 @@ interface NavigationProps {
 
 const Navigation: React.FC<NavigationProps> = ({ user, activeSection, scrollToSection, onLogout, onOpenAuth }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { language, setLanguage, t } = useLanguage();
 
   const links = [
-    { id: 'hero', label: 'Início' },
-    { id: 'fundamentos', label: 'Fundamentos' },
-    { id: 'variaveis', label: 'Variáveis' },
-    { id: 'funcoes', label: 'Funções' },
-    { id: 'lab', label: 'Laboratório' },
-    { id: 'dashboard', label: 'Progresso' },
+    { id: 'hero', label: t.nav.home },
+    { id: 'fundamentos', label: t.nav.fundamentals },
+    { id: 'variaveis', label: t.nav.variables },
+    { id: 'funcoes', label: t.nav.functions },
+    { id: 'lab', label: t.nav.lab },
+    { id: 'dashboard', label: t.nav.progress },
   ];
+
+  const toggleLanguage = () => {
+    setLanguage(language === 'pt' ? 'en' : 'pt');
+  };
 
   return (
     <header className="fixed top-4 left-1/2 -translate-x-1/2 w-[calc(100%-32px)] max-w-6xl z-50">
@@ -51,13 +57,22 @@ const Navigation: React.FC<NavigationProps> = ({ user, activeSection, scrollToSe
             ))}
           </nav>
 
-          {/* User / Auth */}
+          {/* User / Auth / Lang */}
           <div className="flex items-center gap-3">
+            {/* Language Toggle */}
+            <button 
+              onClick={toggleLanguage}
+              className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-white/10 text-white transition-colors border border-white/5"
+              title="Mudar Idioma / Change Language"
+            >
+              {language === 'pt' ? '🇧🇷' : '🇺🇸'}
+            </button>
+
             {user ? (
               <div className="flex items-center gap-3 pl-3 border-l border-white/10">
                 <div className="text-right hidden sm:block">
                   <div className="text-sm font-semibold text-white">{user.name}</div>
-                  <div className="text-[10px] text-primary uppercase tracking-wider font-bold">{user.level}</div>
+                  <div className="text--[10px] text-primary uppercase tracking-wider font-bold">{user.level}</div>
                 </div>
                 <div 
                   className="w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-inner"
@@ -68,7 +83,7 @@ const Navigation: React.FC<NavigationProps> = ({ user, activeSection, scrollToSe
                 <button 
                   onClick={onLogout}
                   className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/10 text-muted hover:text-red-400 transition-colors"
-                  title="Sair"
+                  title={t.nav.logout}
                 >
                   <i className="fas fa-sign-out-alt"></i>
                 </button>
@@ -78,7 +93,7 @@ const Navigation: React.FC<NavigationProps> = ({ user, activeSection, scrollToSe
                 onClick={onOpenAuth}
                 className="bg-primary/20 hover:bg-primary/30 text-primary border border-primary/50 px-4 py-2 rounded-lg text-sm font-semibold transition-all"
               >
-                Entrar
+                {t.nav.login}
               </button>
             )}
 

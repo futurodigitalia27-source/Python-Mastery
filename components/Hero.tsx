@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface HeroProps {
   onStart: () => void;
@@ -6,6 +7,8 @@ interface HeroProps {
 }
 
 const Hero: React.FC<HeroProps> = ({ onStart, onOpenStudentArea }) => {
+  const { t } = useLanguage();
+
   return (
     <section id="hero" className="snap-section relative flex items-center justify-center pt-20 overflow-hidden">
       {/* Background Effects */}
@@ -17,12 +20,12 @@ const Hero: React.FC<HeroProps> = ({ onStart, onOpenStudentArea }) => {
       <div className="relative z-10 text-center max-w-4xl px-6">
         
         <h1 className="text-5xl md:text-7xl font-extrabold mb-6 tracking-tight leading-tight bg-gradient-to-b from-white to-white/60 bg-clip-text text-transparent animate-float-title">
-          Domine Python com <br/>
-          <span className="text-primary">Inteligência Artificial</span>
+          {t.hero.title_pre} <br/>
+          <span className="text-primary">{t.hero.title_high}</span>
         </h1>
         
         <p className="text-lg md:text-xl text-muted mb-10 max-w-2xl mx-auto leading-relaxed">
-          Uma jornada interativa do zero ao profissional. Aprenda lógica, automação e ciência de dados com Fole, seu mentor IA pessoal.
+          {t.hero.subtitle}
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -30,13 +33,13 @@ const Hero: React.FC<HeroProps> = ({ onStart, onOpenStudentArea }) => {
             onClick={onStart}
             className="px-8 py-4 bg-primary hover:bg-teal-400 text-slate-900 font-bold rounded-xl shadow-lg shadow-teal-500/25 transform hover:-translate-y-1 transition-all duration-200 flex items-center gap-2"
           >
-            <i className="fas fa-play"></i> Começar Agora
+            <i className="fas fa-play"></i> {t.hero.btn_start}
           </button>
           <button 
             onClick={onOpenStudentArea}
             className="px-8 py-4 bg-transparent border border-white/10 hover:bg-white/5 text-white font-medium rounded-xl backdrop-blur-sm transition-all duration-200 flex items-center gap-2"
           >
-            <i className="fas fa-user-graduate text-primary"></i> Área do Aluno
+            <i className="fas fa-user-graduate text-primary"></i> {t.hero.btn_student}
           </button>
         </div>
       </div>

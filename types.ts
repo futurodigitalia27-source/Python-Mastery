@@ -27,3 +27,5 @@ export interface Stat {
   value: string | number;
   icon: string;
 }
+
+export type Language = 'pt' | 'en';

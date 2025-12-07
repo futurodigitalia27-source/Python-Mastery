@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { sendMessageToGemini } from '../services/geminiService';
+import { sendMessageToGemini, speakText } from '../services/geminiService';
 import { ChatMessage } from '../types';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface ChatAssistantProps {
   userName?: string;
@@ -9,16 +10,26 @@ interface ChatAssistantProps {
 const ChatAssistant: React.FC<ChatAssistantProps> = ({ userName }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState('');
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    {
-      id: 'welcome',
-      role: 'model',
-      content: `Olá${userName ? ' **' + userName + '**' : ''}! 👋 Sou o Fole, seu assistente inteligente. \n\nEstou pronto para ajudar com Python, revisar código ou responder qualquer dúvida que você tiver sobre o universo! 🌌`,
-      timestamp: new Date()
-    }
-  ]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isVoiceOn, setIsVoiceOn] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  
+  const { t, language } = useLanguage();
+
+  // Initialize welcome message when component mounts or language changes
+  useEffect(() => {
+    if (messages.length === 0) {
+        setMessages([
+            {
+              id: 'welcome',
+              role: 'model',
+              content: t.chat.welcome(userName || ''),
+              timestamp: new Date()
+            }
+        ]);
+    }
+  }, [t, userName, messages.length]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -42,7 +53,8 @@ const ChatAssistant: React.FC<ChatAssistantProps> = ({ userName }) => {
     setInput('');
     setIsLoading(true);
 
-    const responseText = await sendMessageToGemini(input);
+    // Pass current language to service
+    const responseText = await sendMessageToGemini(input, language);
 
     const modelMsg: ChatMessage = {
       id: (Date.now() + 1).toString(),
@@ -53,6 +65,11 @@ const ChatAssistant: React.FC<ChatAssistantProps> = ({ userName }) => {
 
     setMessages(prev => [...prev, modelMsg]);
     setIsLoading(false);
+
+    // Auto-play only if the global voice toggle is ON
+    if (isVoiceOn) {
+      speakText(responseText);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -82,7 +99,7 @@ const ChatAssistant: React.FC<ChatAssistantProps> = ({ userName }) => {
                   onClick={() => navigator.clipboard.writeText(code)}
                   className="text-[10px] text-primary hover:text-white transition-colors font-medium flex items-center gap-1"
                >
-                 <i className="fas fa-copy"></i> Copiar
+                 <i className="fas fa-copy"></i> Copy
                </button>
             </div>
             <pre className="p-3 overflow-x-auto text-xs font-mono text-blue-200 leading-relaxed scrollbar-thin scrollbar-thumb-white/10">
@@ -136,13 +153,25 @@ const ChatAssistant: React.FC<ChatAssistantProps> = ({ userName }) => {
               <p className="text-[10px] text-muted uppercase tracking-wider font-medium">IA • Python Expert</p>
             </div>
           </div>
-          <button 
-            onClick={() => setMessages([])} 
-            className="w-8 h-8 rounded-lg hover:bg-white/10 flex items-center justify-center text-muted hover:text-white transition-colors"
-            title="Limpar Chat"
-          >
-            <i className="fas fa-trash-alt text-xs"></i>
-          </button>
+          
+          <div className="flex items-center gap-2">
+            <button 
+              onClick={() => setIsVoiceOn(!isVoiceOn)}
+              className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors border ${
+                isVoiceOn ? 'bg-primary text-slate-900 border-primary' : 'border-white/10 text-muted hover:text-white hover:bg-white/5'
+              }`}
+              title={isVoiceOn ? "Auto-play: ON" : "Auto-play: OFF"}
+            >
+              <i className={`fas ${isVoiceOn ? 'fa-volume-up' : 'fa-volume-mute'} text-xs`}></i>
+            </button>
+            <button 
+              onClick={() => setMessages([])} 
+              className="w-8 h-8 rounded-lg hover:bg-white/10 flex items-center justify-center text-muted hover:text-white transition-colors border border-transparent hover:border-white/10"
+              title="Clear Chat"
+            >
+              <i className="fas fa-trash-alt text-xs"></i>
+            </button>
+          </div>
         </div>
 
         {/* Messages */}
@@ -154,13 +183,25 @@ const ChatAssistant: React.FC<ChatAssistantProps> = ({ userName }) => {
             >
               <div className={`flex flex-col max-w-[85%] ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
                 <div
-                  className={`p-3.5 rounded-2xl text-sm shadow-sm ${
+                  className={`p-3.5 rounded-2xl text-sm shadow-sm relative group ${
                     msg.role === 'user'
                       ? 'bg-primary text-slate-900 rounded-tr-sm font-medium'
                       : 'bg-[#1e293b]/80 backdrop-blur-md text-gray-100 rounded-tl-sm border border-white/5'
                   }`}
                 >
                   {renderContent(msg.content)}
+                  
+                  {/* Manual Play Button specific to this message */}
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      speakText(msg.content);
+                    }}
+                    className={`absolute -bottom-3 ${msg.role === 'user' ? '-left-3' : '-right-3'} w-6 h-6 rounded-full bg-[#0b1220] border border-white/10 text-muted hover:text-primary flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity z-10`}
+                    title="Ouvir mensagem"
+                  >
+                     <i className="fas fa-play text-[8px]"></i>
+                  </button>
                 </div>
                 <div className="text-[10px] mt-1.5 opacity-40 px-1 font-medium">
                   {msg.role === 'model' && <span className="mr-1">Fole •</span>}
@@ -173,7 +214,7 @@ const ChatAssistant: React.FC<ChatAssistantProps> = ({ userName }) => {
           {isLoading && (
             <div className="flex justify-start w-full">
               <div className="bg-[#1e293b]/50 border border-white/5 p-4 rounded-2xl rounded-tl-sm flex items-center gap-2">
-                <span className="text-xs text-muted font-medium">Pensando</span>
+                <span className="text-xs text-muted font-medium">{t.chat.thinking}</span>
                 <div className="flex gap-1">
                   <div className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce"></div>
                   <div className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce delay-100"></div>
@@ -193,7 +234,7 @@ const ChatAssistant: React.FC<ChatAssistantProps> = ({ userName }) => {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Digite sua pergunta..."
+                placeholder={t.chat.placeholder}
                 rows={1}
                 className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-primary/50 focus:bg-white/10 placeholder:text-gray-500 resize-none min-h-[44px] max-h-[120px] scrollbar-hide"
                 style={{ height: 'auto', overflow: 'hidden' }}

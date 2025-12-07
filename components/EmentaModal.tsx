@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { jsPDF } from 'jspdf';
+import { explainQuizConcept } from '../services/geminiService';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface EmentaModalProps {
   isOpen: boolean;
@@ -347,60 +349,144 @@ const QuizSection = () => {
   const [current, setCurrent] = useState(0);
   const [score, setScore] = useState(0);
   const [showScore, setShowScore] = useState(false);
+  const [robotMessage, setRobotMessage] = useState("Olá! Sou o QuizBot. Selecione uma resposta que eu te digo se está certa!");
+  const [isExplaining, setIsExplaining] = useState(false);
+  const [selectedOption, setSelectedOption] = useState<number | null>(null);
+  const { language } = useLanguage();
 
   const questions = [
-    { q: "Qual o tipo de dado de: '10'?", options: ["int", "str", "float"], a: 1 },
-    { q: "Como imprimir no console?", options: ["console.log()", "echo", "print()"], a: 2 },
-    { q: "Qual símbolo inicia um comentário?", options: ["//", "#", "<!--"], a: 1 },
-    { q: "Lista é mutável?", options: ["Sim", "Não", "Depende"], a: 0 },
-    { q: "Qual biblioteca é usada para dados?", options: ["Flask", "Pandas", "PyGame"], a: 1 },
+    { q: "Qual o tipo de dado de: '10'?", options: ["int", "str", "float", "bool"], a: 1 },
+    { q: "Como imprimir no console?", options: ["console.log()", "echo", "print()", "sys.out"], a: 2 },
+    { q: "Qual símbolo inicia um comentário?", options: ["//", "#", "<!--", "/*"], a: 1 },
+    { q: "Lista é mutável?", options: ["Sim", "Não", "Depende", "Apenas números"], a: 0 },
+    { q: "Qual biblioteca é usada para análise de dados?", options: ["Flask", "Pandas", "PyGame", "Django"], a: 1 },
+    { q: "Qual o resultado de 3 ** 2?", options: ["6", "9", "5", "1.5"], a: 1 },
+    { q: "Como adicionar um item ao final de uma lista?", options: [".push()", ".add()", ".append()", ".insert()"], a: 2 },
+    { q: "Qual palavra-chave define uma função?", options: ["func", "def", "function", "lambda"], a: 1 },
+    { q: "Tuplas são imutáveis?", options: ["Sim", "Não", "Às vezes", "Apenas vazias"], a: 0 },
+    { q: "Qual operador representa 'diferente'?", options: ["<>", "!=", "==", "!=="], a: 1 },
+    { q: "Como obter o tamanho de uma lista?", options: ["size()", "count()", "len()", "length"], a: 2 },
+    { q: "Qual o tipo de dado de True?", options: ["str", "int", "bool", "float"], a: 2 },
+    { q: "Qual o resultado de 10 // 3?", options: ["3.33", "3", "4", "3.0"], a: 1 },
+    { q: "Como importar um módulo?", options: ["include", "require", "import", "using"], a: 2 },
+    { q: "Qual estrutura usa chave-valor?", options: ["Lista", "Tupla", "Dicionário", "Set"], a: 2 },
+    { q: "Como converter string '5' para inteiro?", options: ["int('5')", "str(5)", "float('5')", "parse('5')"], a: 0 },
+    { q: "Qual índice acessa o primeiro elemento de uma lista?", options: ["1", "0", "-1", "first"], a: 1 },
+    { q: "O que range(3) gera (conceitualmente)?", options: ["1, 2, 3", "0, 1, 2", "0, 1, 2, 3", "1, 2"], a: 1 },
+    { q: "Qual operador lógico retorna True apenas se ambos forem True?", options: ["or", "not", "and", "xor"], a: 2 },
+    { q: "Como capturar exceções em Python?", options: ["try/catch", "try/except", "do/catch", "check/error"], a: 1 },
   ];
 
   const handleAnswer = (idx: number) => {
-    if (idx === questions[current].a) {
+    setSelectedOption(idx);
+    const correct = idx === questions[current].a;
+    
+    if (correct) {
       setScore(score + 1);
-    }
-    const next = current + 1;
-    if (next < questions.length) {
-      setCurrent(next);
+      setRobotMessage("✅ Exato! Você acertou. Vamos para a próxima!");
+      setTimeout(() => {
+        const next = current + 1;
+        if (next < questions.length) {
+          setCurrent(next);
+          setSelectedOption(null);
+          setRobotMessage("Próxima pergunta: " + questions[next].q);
+        } else {
+          setShowScore(true);
+        }
+      }, 1500);
     } else {
-      setShowScore(true);
+      setRobotMessage("❌ Ops! Essa não é a resposta correta. Tente pedir uma dica!");
     }
+  };
+
+  const handleHint = async () => {
+    setIsExplaining(true);
+    setRobotMessage("🤔 Deixe-me analisar a questão para te dar uma dica...");
+    const hint = await explainQuizConcept(questions[current].q, questions[current].options, language);
+    setRobotMessage("💡 Dica do Robô: " + hint);
+    setIsExplaining(false);
   };
 
   const reset = () => {
     setCurrent(0);
     setScore(0);
     setShowScore(false);
+    setSelectedOption(null);
+    setRobotMessage("Olá! Sou o QuizBot. Selecione uma resposta que eu te digo se está certa!");
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-full p-4 text-center">
+    <div className="flex flex-col items-center justify-center h-full p-4 w-full">
       {showScore ? (
-        <div className="bg-white/5 p-8 rounded-2xl border border-white/10 animate-fadeIn">
+        <div className="bg-white/5 p-8 rounded-2xl border border-white/10 animate-fadeIn text-center">
           <div className="text-4xl mb-4">🏆</div>
           <h3 className="text-2xl font-bold text-white mb-2">Quiz Finalizado!</h3>
           <p className="text-lg text-muted mb-6">Você acertou <span className="text-primary font-bold">{score}</span> de {questions.length} questões.</p>
           <button onClick={reset} className="px-6 py-2 bg-primary text-black font-bold rounded-lg hover:bg-teal-400">Tentar Novamente</button>
         </div>
       ) : (
-        <div className="w-full max-w-md bg-white/5 p-6 rounded-2xl border border-white/10 animate-fadeIn">
-          <div className="flex justify-between text-xs text-muted mb-4 uppercase tracking-wider">
-            <span>Questão {current + 1}/{questions.length}</span>
-            <span>Pontos: {score}</span>
+        <div className="flex flex-col md:flex-row gap-6 w-full max-w-4xl">
+          
+          {/* Left: Robot & Feedback */}
+          <div className="md:w-1/3 flex flex-col gap-4">
+            <div className="bg-white/5 border border-white/10 p-4 rounded-2xl flex flex-col items-center text-center relative overflow-hidden">
+               <div className="w-20 h-20 bg-blue-500/20 rounded-full flex items-center justify-center border border-blue-500/50 mb-3 relative z-10">
+                 <i className={`fas fa-robot text-4xl text-blue-400 ${isExplaining ? 'animate-bounce' : ''}`}></i>
+               </div>
+               
+               {/* Speech Bubble */}
+               <div className="relative bg-white/10 p-4 rounded-xl text-sm text-gray-200 border border-white/5 w-full">
+                 <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white/10 border-t border-l border-white/5 rotate-45 transform"></div>
+                 {robotMessage}
+               </div>
+
+               <button 
+                 onClick={handleHint}
+                 disabled={isExplaining}
+                 className="mt-4 w-full py-2 bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-400 border border-yellow-500/30 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-2"
+               >
+                 {isExplaining ? <i className="fas fa-spinner fa-spin"></i> : <i className="far fa-lightbulb"></i>} Pedir Dica
+               </button>
+            </div>
+            
+            <div className="bg-black/20 p-4 rounded-xl border border-white/5 flex justify-between items-center">
+               <span className="text-xs text-muted uppercase">Progresso</span>
+               <span className="text-lg font-bold text-white">{current + 1} <span className="text-muted text-sm">/ {questions.length}</span></span>
+            </div>
           </div>
-          <h3 className="text-xl font-bold text-white mb-6">{questions[current].q}</h3>
-          <div className="space-y-3">
-            {questions[current].options.map((opt, i) => (
-              <button 
-                key={i} 
-                onClick={() => handleAnswer(i)}
-                className="w-full p-3 bg-black/20 hover:bg-primary/20 hover:text-primary text-gray-300 rounded-xl border border-white/5 transition-all text-left"
-              >
-                {opt}
-              </button>
-            ))}
+
+          {/* Right: Question */}
+          <div className="flex-1 bg-white/5 p-6 rounded-2xl border border-white/10 animate-fadeIn flex flex-col justify-center">
+            <h3 className="text-xl md:text-2xl font-bold text-white mb-8">{questions[current].q}</h3>
+            <div className="grid grid-cols-1 gap-3">
+              {questions[current].options.map((opt, i) => {
+                 let btnClass = "bg-black/20 hover:bg-white/10 border-white/5 text-gray-300";
+                 if (selectedOption !== null) {
+                    if (i === questions[current].a) {
+                        btnClass = "bg-green-500/20 border-green-500/50 text-green-400"; // Show correct
+                    } else if (i === selectedOption) {
+                        btnClass = "bg-red-500/20 border-red-500/50 text-red-400"; // Show wrong selection
+                    } else {
+                        btnClass = "opacity-50 border-white/5"; // Dim others
+                    }
+                 }
+
+                 return (
+                  <button 
+                    key={i} 
+                    onClick={() => handleAnswer(i)}
+                    disabled={selectedOption !== null && selectedOption !== i && i !== questions[current].a}
+                    className={`w-full p-4 rounded-xl border transition-all text-left font-medium text-lg flex justify-between items-center ${btnClass}`}
+                  >
+                    {opt}
+                    {selectedOption !== null && i === questions[current].a && <i className="fas fa-check"></i>}
+                    {selectedOption !== null && i === selectedOption && i !== questions[current].a && <i className="fas fa-times"></i>}
+                  </button>
+                 );
+              })}
+            </div>
           </div>
+
         </div>
       )}
     </div>

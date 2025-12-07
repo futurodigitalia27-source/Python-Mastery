@@ -1,30 +1,27 @@
 import React from 'react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const Funcoes: React.FC = () => {
+  const { t } = useLanguage();
+
   return (
     <section id="funcoes" className="snap-section flex items-center justify-center p-6 bg-[#0f1720]">
       <div className="glass-panel w-full max-w-6xl p-8 md:p-12 rounded-3xl border border-white/5 shadow-2xl">
          <div className="flex flex-col md:flex-row gap-12 items-center">
             <div className="flex-1">
-              <div className="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold mb-4">DRY: Don't Repeat Yourself</div>
-              <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white">Arquitetura de Funções</h2>
+              <div className="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold mb-4">{t.funcoes.tag}</div>
+              <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white">{t.funcoes.title}</h2>
               <p className="text-muted text-lg mb-6 leading-relaxed">
-                Funções são mini-programas dentro do seu código. Elas recebem dados, processam e retornam um resultado. Modularize seu pensamento.
+                {t.funcoes.desc}
               </p>
               
               <ul className="space-y-4">
-                <li className="flex items-start gap-3">
-                  <div className="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center text-green-400 mt-1"><i className="fas fa-check text-xs"></i></div>
-                  <span className="text-gray-300">Reutilização de código</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <div className="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center text-green-400 mt-1"><i className="fas fa-check text-xs"></i></div>
-                  <span className="text-gray-300">Organização e legibilidade</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <div className="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center text-green-400 mt-1"><i className="fas fa-check text-xs"></i></div>
-                  <span className="text-gray-300">Testabilidade isolada</span>
-                </li>
+                {t.funcoes.list.map((item, index) => (
+                    <li key={index} className="flex items-start gap-3">
+                        <div className="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center text-green-400 mt-1"><i className="fas fa-check text-xs"></i></div>
+                        <span className="text-gray-300">{item}</span>
+                    </li>
+                ))}
               </ul>
             </div>
 

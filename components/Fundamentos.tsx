@@ -1,14 +1,16 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const Fundamentos: React.FC = () => {
+  const { t } = useLanguage();
+
   return (
     <section id="fundamentos" className="snap-section flex items-center justify-center p-6 bg-gradient-to-b from-[#0f1720] to-[#081018]">
       <div className="glass-panel w-full max-w-6xl p-8 md:p-12 rounded-3xl border border-white/5 shadow-2xl">
         <div className="mb-10">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">Fundamentos da Lógica</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">{t.fundamentos.title}</h2>
           <p className="text-muted text-lg max-w-2xl">
-            Antes de escrever código, você precisa aprender a pensar como um computador. Domine algoritmos e fluxogramas.
+            {t.fundamentos.desc}
           </p>
         </div>
 
@@ -18,9 +20,9 @@ const Fundamentos: React.FC = () => {
             <div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center mb-4 text-blue-400 group-hover:bg-blue-500 group-hover:text-white transition-colors">
               <i className="fas fa-list-ol text-xl"></i>
             </div>
-            <h3 className="text-xl font-bold text-white mb-2">Sequência</h3>
+            <h3 className="text-xl font-bold text-white mb-2">{t.fundamentos.card1_title}</h3>
             <p className="text-muted text-sm mb-4">
-              A ordem importa. Aprenda como instruções passo a passo formam a base de qualquer programa.
+              {t.fundamentos.card1_desc}
             </p>
             <div className="bg-black/30 p-3 rounded-lg font-mono text-xs text-green-400">
               <div>1. Acordar</div>
@@ -34,9 +36,9 @@ const Fundamentos: React.FC = () => {
             <div className="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center mb-4 text-purple-400 group-hover:bg-purple-500 group-hover:text-white transition-colors">
               <i className="fas fa-project-diagram text-xl"></i>
             </div>
-            <h3 className="text-xl font-bold text-white mb-2">Fluxogramas</h3>
+            <h3 className="text-xl font-bold text-white mb-2">{t.fundamentos.card2_title}</h3>
             <p className="text-muted text-sm mb-4">
-              Visualize decisões. Se (if) estiver chovendo, leve guarda-chuva. Senão (else), vá de óculos.
+              {t.fundamentos.card2_desc}
             </p>
             {/* Simple SVG Flow */}
             <svg viewBox="0 0 200 100" className="w-full h-24 opacity-70 group-hover:opacity-100 transition-opacity">
@@ -55,9 +57,9 @@ const Fundamentos: React.FC = () => {
             <div className="w-12 h-12 bg-primary/20 rounded-xl flex items-center justify-center mb-4 text-primary group-hover:bg-primary group-hover:text-white transition-colors">
               <i className="fas fa-sync-alt text-xl"></i>
             </div>
-            <h3 className="text-xl font-bold text-white mb-2">Repetição</h3>
+            <h3 className="text-xl font-bold text-white mb-2">{t.fundamentos.card3_title}</h3>
             <p className="text-muted text-sm mb-4">
-              Automação é poder. Execute tarefas milhares de vezes sem cansar usando Loops.
+              {t.fundamentos.card3_desc}
             </p>
              <div className="bg-black/30 p-3 rounded-lg font-mono text-xs text-pink-400">
               <div>while not success:</div>

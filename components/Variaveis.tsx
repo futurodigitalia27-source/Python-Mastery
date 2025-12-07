@@ -1,6 +1,9 @@
 import React from 'react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const Variaveis: React.FC = () => {
+  const { t } = useLanguage();
+
   return (
     <section id="variaveis" className="snap-section flex items-center justify-center p-6 bg-[#081018]">
       <div className="glass-panel w-full max-w-6xl p-8 md:p-12 rounded-3xl border border-white/5 shadow-2xl relative overflow-hidden">
@@ -8,9 +11,9 @@ const Variaveis: React.FC = () => {
         <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -z-10"></div>
         
         <div className="mb-10">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">Sistema de Variáveis</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">{t.variaveis.title}</h2>
           <p className="text-muted text-lg max-w-2xl">
-            Variáveis são caixas onde guardamos informações. Em Python, elas são dinâmicas e poderosas.
+            {t.variaveis.desc}
           </p>
         </div>
 
@@ -19,31 +22,31 @@ const Variaveis: React.FC = () => {
            <div className="bg-white/5 p-6 rounded-2xl border border-white/10 hover:border-primary/50 transition-all group">
              <div className="text-xs font-mono text-blue-400 mb-2">int</div>
              <div className="text-3xl font-bold text-white mb-2">42</div>
-             <p className="text-sm text-muted">Números inteiros para contagens e matemática discreta.</p>
+             <p className="text-sm text-muted">{t.variaveis.types.int.desc}</p>
            </div>
            
            <div className="bg-white/5 p-6 rounded-2xl border border-white/10 hover:border-green-500/50 transition-all group">
              <div className="text-xs font-mono text-green-400 mb-2">str</div>
              <div className="text-3xl font-bold text-white mb-2">"Olá"</div>
-             <p className="text-sm text-muted">Textos (Strings) para mensagens e processamento de dados.</p>
+             <p className="text-sm text-muted">{t.variaveis.types.str.desc}</p>
            </div>
 
            <div className="bg-white/5 p-6 rounded-2xl border border-white/10 hover:border-yellow-500/50 transition-all group">
              <div className="text-xs font-mono text-yellow-400 mb-2">float</div>
              <div className="text-3xl font-bold text-white mb-2">3.14</div>
-             <p className="text-sm text-muted">Números decimais para precisão e cálculos científicos.</p>
+             <p className="text-sm text-muted">{t.variaveis.types.float.desc}</p>
            </div>
 
            <div className="bg-white/5 p-6 rounded-2xl border border-white/10 hover:border-purple-500/50 transition-all group">
              <div className="text-xs font-mono text-purple-400 mb-2">bool</div>
              <div className="text-3xl font-bold text-white mb-2">True</div>
-             <p className="text-sm text-muted">Lógica booleana para controle de fluxo e decisões.</p>
+             <p className="text-sm text-muted">{t.variaveis.types.bool.desc}</p>
            </div>
         </div>
 
         <div className="mt-12 bg-black/30 p-6 rounded-xl border border-white/5">
            <h3 className="text-white font-bold mb-4 flex items-center gap-2">
-             <i className="fas fa-code text-primary"></i> Exemplo Prático
+             <i className="fas fa-code text-primary"></i> {t.variaveis.ex_title}
            </h3>
            <code className="block font-mono text-sm text-gray-300">
              <span className="text-blue-400">nome</span> = <span className="text-green-400">"Fole"</span> <span className="text-gray-500"># String</span><br/>

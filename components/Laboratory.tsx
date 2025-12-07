@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Exercise } from '../types';
 import { analyzeCodeError } from '../services/geminiService';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const exercises: Exercise[] = [
   {
@@ -173,6 +174,7 @@ const Laboratory: React.FC = () => {
   const [aiFeedback, setAiFeedback] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const feedbackRef = useRef<HTMLDivElement>(null);
+  const { t, language } = useLanguage();
 
   useEffect(() => {
     setCode(activeExercise.template);
@@ -200,6 +202,7 @@ const Laboratory: React.FC = () => {
         let hasError = false;
 
         // Mock simples para exercícios (Execução Simulada)
+        // Note: For real Python execution in browser, one would use Pyodide.
         const lines = code.split('\n');
         
         // Simulação básica de outputs baseada em padrões de string para demonstração
@@ -266,12 +269,12 @@ const Laboratory: React.FC = () => {
 
         if (!hasError && activeExercise.check && activeExercise.check(simulatedOutput)) {
           setStatus('success');
-          setOutput(prev => prev + "\n✨ SUCESSO! Exercício Concluído! ✨");
+          setOutput(prev => prev + "\n" + t.lab.success_msg);
         } else {
           setStatus('error');
           // Disparar análise do Robô IA
           setIsAnalyzing(true);
-          const feedback = await analyzeCodeError(code, simulatedOutput, activeExercise.title);
+          const feedback = await analyzeCodeError(code, simulatedOutput, activeExercise.title, language);
           setAiFeedback(feedback);
           setIsAnalyzing(false);
         }
@@ -293,7 +296,7 @@ const Laboratory: React.FC = () => {
           {/* Top: Exercises List */}
           <div className="glass-panel rounded-2xl flex flex-col p-4 h-1/2 overflow-hidden border border-white/10">
             <h3 className="text-white font-bold mb-4 flex items-center gap-2 sticky top-0">
-              <i className="fas fa-list-ul text-primary"></i> Lista de Exercícios
+              <i className="fas fa-list-ul text-primary"></i> {t.lab.exercises}
             </h3>
             <ul className="space-y-2 overflow-y-auto flex-1 pr-2 scrollbar-thin scrollbar-thumb-white/10">
               {exercises.map(ex => (
@@ -323,8 +326,8 @@ const Laboratory: React.FC = () => {
                  <i className="fas fa-robot"></i>
               </div>
               <div>
-                <h3 className="text-white text-sm font-bold">Fole Debugger</h3>
-                <p className="text-[10px] text-red-300">Detecção automática de erros</p>
+                <h3 className="text-white text-sm font-bold">{t.lab.debugger_title}</h3>
+                <p className="text-[10px] text-red-300">{t.lab.debugger_sub}</p>
               </div>
             </div>
             
@@ -332,7 +335,7 @@ const Laboratory: React.FC = () => {
               {isAnalyzing ? (
                 <div className="flex flex-col items-center justify-center h-full text-muted space-y-2">
                    <i className="fas fa-circle-notch fa-spin text-2xl text-primary"></i>
-                   <span className="text-xs animate-pulse">Analisando seu código...</span>
+                   <span className="text-xs animate-pulse">{t.lab.analyzing}</span>
                 </div>
               ) : aiFeedback ? (
                 <div ref={feedbackRef} className="animate-fadeIn">
@@ -341,14 +344,14 @@ const Laboratory: React.FC = () => {
                    </div>
                    <div className="mt-4 pt-4 border-t border-white/5 text-center">
                      <button onClick={() => setAiFeedback(null)} className="text-xs text-muted hover:text-white underline">
-                       Limpar análise
+                       {t.lab.clear_analysis}
                      </button>
                    </div>
                 </div>
               ) : (
                 <div className="flex flex-col items-center justify-center h-full text-center opacity-40">
                   <i className="fas fa-bug text-3xl mb-2"></i>
-                  <p className="text-xs max-w-[200px]">Execute seu código. Se houver erros, eu aparecerei aqui para ajudar!</p>
+                  <p className="text-xs max-w-[200px]">{t.lab.empty_state}</p>
                 </div>
               )}
             </div>
@@ -380,7 +383,7 @@ const Laboratory: React.FC = () => {
                   onClick={runCode} 
                   className="bg-green-600 hover:bg-green-500 text-white font-bold text-xs px-4 py-1.5 rounded-lg flex items-center gap-2 transition-all shadow-lg shadow-green-900/20"
                 >
-                  <i className="fas fa-play"></i> Executar
+                  <i className="fas fa-play"></i> {t.lab.run}
                 </button>
               </div>
               <textarea
@@ -396,13 +399,13 @@ const Laboratory: React.FC = () => {
               <div className="bg-[#0b1220] p-3 px-4 border-b border-white/5 flex justify-between items-center">
                 <span className="text-xs font-mono text-muted uppercase tracking-wider">Terminal</span>
                 <button onClick={() => setOutput("")} className="text-[10px] text-muted hover:text-white">
-                  <i className="fas fa-ban"></i> Clear
+                  <i className="fas fa-ban"></i> {t.lab.clear_console}
                 </button>
               </div>
               <pre className={`flex-1 p-4 font-mono text-xs overflow-auto whitespace-pre-wrap ${
                 status === 'success' ? 'text-green-400' : status === 'error' ? 'text-red-400' : 'text-gray-300'
               }`}>
-                {output || <span className="text-gray-600 italic">Pronto para execução...</span>}
+                {output || <span className="text-gray-600 italic">{t.lab.ready}</span>}
               </pre>
             </div>
           </div>
