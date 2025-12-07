@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { jsPDF } from 'jspdf';
 import { explainQuizConcept } from '../services/geminiService';
@@ -355,6 +356,7 @@ const QuizSection = () => {
   const { language } = useLanguage();
 
   const questions = [
+    // 1-20 (Original)
     { q: "Qual o tipo de dado de: '10'?", options: ["int", "str", "float", "bool"], a: 1 },
     { q: "Como imprimir no console?", options: ["console.log()", "echo", "print()", "sys.out"], a: 2 },
     { q: "Qual símbolo inicia um comentário?", options: ["//", "#", "<!--", "/*"], a: 1 },
@@ -375,6 +377,94 @@ const QuizSection = () => {
     { q: "O que range(3) gera (conceitualmente)?", options: ["1, 2, 3", "0, 1, 2", "0, 1, 2, 3", "1, 2"], a: 1 },
     { q: "Qual operador lógico retorna True apenas se ambos forem True?", options: ["or", "not", "and", "xor"], a: 2 },
     { q: "Como capturar exceções em Python?", options: ["try/catch", "try/except", "do/catch", "check/error"], a: 1 },
+    
+    // 21-40 (Basic Concepts & Strings)
+    { q: "O que o método .strip() faz?", options: ["Remove espaços em branco", "Divide a string", "Maiúsculas", "Conta letras"], a: 0 },
+    { q: "Qual o resultado de 'Ola' * 3?", options: ["Erro", "OlaOlaOla", "Ola 3", "Ola*3"], a: 1 },
+    { q: "Como verificar se 'a' está em 'banana'?", options: ["'a'.has('banana')", "'banana'.contains('a')", "'a' in 'banana'", "find('a', 'banana')"], a: 2 },
+    { q: "Qual método deixa tudo minúsculo?", options: [".lower()", ".min()", ".small()", ".toLower()"], a: 0 },
+    { q: "O que é 'f-string'?", options: ["Erro de sintaxe", "Função string", "Formatação de string", "File string"], a: 2 },
+    { q: "Qual o índice do último elemento?", options: ["0", "len()-1", "-1", "last"], a: 2 },
+    { q: "Como criar uma lista vazia?", options: ["list()", "[]", "Ambos", "Nenhum"], a: 2 },
+    { q: "O que type(3.14) retorna?", options: ["int", "double", "float", "decimal"], a: 2 },
+    { q: "Qual palavra-chave sai de um loop?", options: ["exit", "stop", "break", "return"], a: 2 },
+    { q: "Qual palavra-chave pula para a próxima iteração?", options: ["skip", "next", "continue", "jump"], a: 2 },
+    { q: "O que é um 'bug'?", options: ["Recurso", "Erro no código", "Vírus", "Hardware"], a: 1 },
+    { q: "Como elevar x ao cubo?", options: ["x ^ 3", "pow(x, 3)", "x ** 3", "Ambos 2 e 3"], a: 3 },
+    { q: "O que é indentação?", options: ["Comentários", "Espaços no início da linha", "Variáveis", "Cores"], a: 1 },
+    { q: "Python é compilado ou interpretado?", options: ["Compilado", "Interpretado", "Híbrido", "Nenhum"], a: 1 },
+    { q: "Qual a extensão de arquivos Python?", options: [".pt", ".py", ".pyt", ".p"], a: 1 },
+    { q: "O que input() retorna?", options: ["int", "str", "float", "void"], a: 1 },
+    { q: "Como comentar múltiplas linhas?", options: ["//", "/* */", "''' '''", "#* *#"], a: 2 },
+    { q: "Qual variável segue o padrão snake_case?", options: ["MyVar", "myVar", "my_var", "m-var"], a: 2 },
+    { q: "O que bool([]) retorna?", options: ["True", "False", "None", "Error"], a: 1 },
+    { q: "Qual a ordem de precedência?", options: ["Multiplicação antes da Adição", "Adição antes da Multiplicação", "Esquerda pra direita", "Aleatório"], a: 0 },
+
+    // 41-60 (Data Structures & Functions)
+    { q: "Como adicionar chave 'x' valor 1 em dict d?", options: ["d.add('x', 1)", "d['x'] = 1", "d.push('x', 1)", "d.append('x', 1)"], a: 1 },
+    { q: "Qual método remove um item da lista pelo valor?", options: [".delete()", ".remove()", ".pop()", ".cut()"], a: 1 },
+    { q: "O que .pop() faz sem argumentos?", options: ["Nada", "Remove o primeiro", "Remove o último", "Erro"], a: 2 },
+    { q: "Como criar um conjunto (set)?", options: ["{}", "[]", "set()", "()"], a: 2 },
+    { q: "Sets permitem duplicatas?", options: ["Sim", "Não", "Às vezes", "Depende"], a: 1 },
+    { q: "Qual estrutura é ordenada?", options: ["Set", "Dict (Py3.7+)", "Lista", "Todas menos Set"], a: 3 },
+    { q: "Como definir um parâmetro padrão?", options: ["def f(x=1):", "def f(x: 1):", "def f(x default 1):", "def f(x == 1):"], a: 0 },
+    { q: "O que *args recebe?", options: ["Argumentos nomeados", "Tupla de argumentos posicionais", "Lista", "Dict"], a: 1 },
+    { q: "O que **kwargs recebe?", options: ["Tupla", "Dicionário de argumentos nomeados", "Lista", "String"], a: 1 },
+    { q: "O que lambda faz?", options: ["Cria função anônima", "Calcula média", "Loop rápido", "Importa"], a: 0 },
+    { q: "Qual função gera uma sequência de números?", options: ["seq()", "range()", "list()", "loop()"], a: 1 },
+    { q: "Como unir duas listas?", options: ["l1 + l2", "l1.add(l2)", "union(l1, l2)", "merge(l1, l2)"], a: 0 },
+    { q: "Como ordenar uma lista in-place?", options: ["sorted(l)", "l.sort()", "order(l)", "l.order()"], a: 1 },
+    { q: "Como inverter uma lista?", options: ["l.reverse()", "l[::-1]", "reversed(l)", "Todas as anteriores"], a: 3 },
+    { q: "Qual erro ocorre ao acessar índice inexistente?", options: ["KeyError", "ValueError", "IndexError", "TypeError"], a: 2 },
+    { q: "Qual erro ocorre ao acessar chave inexistente em dict?", options: ["KeyError", "IndexError", "ValueError", "FindError"], a: 0 },
+    { q: "O que map() faz?", options: ["Cria mapa", "Aplica função a iterável", "Filtra lista", "Reduz lista"], a: 1 },
+    { q: "O que filter() faz?", options: ["Filtra itens baseados em condição", "Limpa lista", "Ordena", "Busca"], a: 0 },
+    { q: "Qual o valor nulo em Python?", options: ["null", "nil", "None", "NaN"], a: 2 },
+    { q: "Como verificar se variável é None?", options: ["x == None", "x is None", "x.isNone()", "check(x)"], a: 1 },
+
+    // 61-80 (OOP & Files)
+    { q: "O que é 'self' em classes?", options: ["Palavra reservada", "Referência à instância", "Classe pai", "Global"], a: 1 },
+    { q: "Qual o método construtor?", options: ["__new__", "__start__", "__init__", "constructor"], a: 2 },
+    { q: "Como herdar de uma classe?", options: ["class A(B):", "class A inherits B:", "class A extends B:", "class A : B"], a: 0 },
+    { q: "O que é polimorfismo?", options: ["Muitas formas", "Muitas classes", "Muitos arquivos", "Herança múltipla"], a: 0 },
+    { q: "Como abrir arquivo para leitura?", options: ["open('f', 'r')", "open('f', 'w')", "read('f')", "file('f')"], a: 0 },
+    { q: "Qual modo de abertura adiciona ao final?", options: ["'w'", "'a'", "'r+'", "'x'"], a: 1 },
+    { q: "Por que usar 'with open...'?", options: ["Mais rápido", "Fecha arquivo automaticamente", "Sintaxe nova", "Obrigatório"], a: 1 },
+    { q: "Como ler todas as linhas?", options: [".read()", ".readlines()", ".getlines()", ".scan()"], a: 1 },
+    { q: "O que é um módulo?", options: ["Função", "Arquivo .py", "Pasta", "Classe"], a: 1 },
+    { q: "O que é um pacote?", options: ["Arquivo zip", "Pasta com __init__.py", "Download", "Biblioteca C"], a: 1 },
+    { q: "Como instalar pacotes externos?", options: ["npm install", "pip install", "python get", "apt-get"], a: 1 },
+    { q: "Qual biblioteca cria gráficos?", options: ["Requests", "Matplotlib", "Flask", "Numpy"], a: 1 },
+    { q: "Qual biblioteca faz requisições HTTP?", options: ["http", "urllib", "requests", "fetch"], a: 2 },
+    { q: "O que é JSON?", options: ["Javascript Object Notation", "Java Source Open Network", "Just Some Objects", "Formatador"], a: 0 },
+    { q: "Como converter dict para JSON string?", options: ["json.dump()", "json.dumps()", "json.load()", "json.parse()"], a: 1 },
+    { q: "Como converter JSON string para dict?", options: ["json.load()", "json.loads()", "json.toDict()", "json.obj()"], a: 1 },
+    { q: "Qual exceção base para erros?", options: ["Error", "Exception", "BaseError", "Problem"], a: 1 },
+    { q: "O que o bloco 'finally' faz?", options: ["Executa se der erro", "Executa se não der erro", "Executa sempre", "Para o código"], a: 2 },
+    { q: "Como lançar um erro propositalmente?", options: ["throw", "raise", "error", "launch"], a: 1 },
+    { q: "O que é um 'Ambiente Virtual'?", options: ["VMware", "Espaço isolado de dependências", "Simulador", "Cloud"], a: 1 },
+
+    // 81-100 (Advanced & Miscellaneous)
+    { q: "O que é um Decorator?", options: ["Enfeite de UI", "Função que modifica outra função", "Classe", "Comentário"], a: 1 },
+    { q: "Sintaxe de decorator?", options: ["@nome", "#nome", "$nome", "&nome"], a: 0 },
+    { q: "O que é um Generator?", options: ["Função com yield", "Motor", "Classe base", "Loop infinito"], a: 1 },
+    { q: "Qual a vantagem de Generators?", options: ["Mais rápido", "Usa menos memória", "Mais fácil", "Compatibilidade"], a: 1 },
+    { q: "O que é PEP 8?", options: ["Versão do Python", "Guia de estilo de código", "Framework", "Compilador"], a: 1 },
+    { q: "Variáveis globais são boa prática?", options: ["Sim", "Não", "Sempre", "Depende do dia"], a: 1 },
+    { q: "O que é 'pass'?", options: ["Aprova aluno", "Operação nula (placeholder)", "Senha", "Pula linha"], a: 1 },
+    { q: "Qual a diferença de 'is' e '=='?", options: ["Nenhuma", "'is' compara identidade, '==' valor", "'is' é mais rápido", "'==' é para strings"], a: 1 },
+    { q: "O que é Docstring?", options: ["String de documentação", "Arquivo doc", "String médica", "Comentário de linha"], a: 0 },
+    { q: "Como acessar atributos privados (convenção)?", options: ["obj.private", "obj._private", "obj.__private", "obj.get()"], a: 1 },
+    { q: "Python suporta herança múltipla?", options: ["Sim", "Não", "Apenas em interfaces", "Apenas Python 2"], a: 0 },
+    { q: "Qual o método para representação em string legível?", options: ["__str__", "__repr__", "__txt__", "__string__"], a: 0 },
+    { q: "Qual o método para representação oficial (debug)?", options: ["__str__", "__repr__", "__debug__", "__code__"], a: 1 },
+    { q: "O que é o GIL?", options: ["Global Interpreter Lock", "Graphics Interface Lib", "Game Input Loop", "General IO Layer"], a: 0 },
+    { q: "Para que serve 'assert'?", options: ["Testar condição em debug", "Parar código", "Afirmar variável", "Imprimir"], a: 0 },
+    { q: "Como trocar valores de a e b?", options: ["temp = a; a = b; b = temp", "a, b = b, a", "swap(a, b)", "a = b"], a: 1 },
+    { q: "O que zip() faz?", options: ["Compacta arquivos", "Combina iteráveis", "Fecha código", "Cria dicionário"], a: 1 },
+    { q: "Qual o resultado de set([1,2,2,3])?", options: ["{1, 2, 3}", "[1, 2, 2, 3]", "(1, 2, 3)", "Error"], a: 0 },
+    { q: "O que enumerate() retorna?", options: ["Índices e valores", "Apenas índices", "Apenas valores", "Contagem"], a: 0 },
+    { q: "Python é fortemente tipado?", options: ["Sim", "Não (Fracamente)", "Não tem tipos", "Tipagem estática"], a: 0 }
   ];
 
   const handleAnswer = (idx: number) => {
@@ -525,6 +615,108 @@ const LibrarySection = () => {
       icon: "fa-laptop-code", 
       desc: "Passo a passo para configurar seu ambiente de desenvolvimento.",
       content: "Instalação Thonny IDE\n\n1. Acesse thonny.org\n2. Baixe a versão para seu OS\n3. Execute o instalador\n4. Abra e comece a codar!"
+    },
+    {
+      title: "Guia de Estruturas de Dados",
+      icon: "fa-layer-group",
+      desc: "Entenda Listas, Tuplas, Sets e Dicionários em profundidade.",
+      content: "Estruturas de Dados\n\n- Listas: Mutáveis, ordenadas [1, 2]\n- Tuplas: Imutáveis (1, 2)\n- Sets: Únicos, não ordenados {1, 2}\n- Dicts: Chave-valor {'k': 'v'}"
+    },
+    {
+      title: "Python para Data Science",
+      icon: "fa-chart-pie",
+      desc: "Roadmap completo para se tornar um Cientista de Dados.",
+      content: "Roadmap Data Science\n\n1. Python Base\n2. Estatística Básica\n3. Pandas & Numpy\n4. Visualização (Matplotlib/Seaborn)\n5. Scikit-learn"
+    },
+    {
+      title: "Cheat Sheet de NumPy",
+      icon: "fa-cube",
+      desc: "Operações matemáticas de alta performance com arrays.",
+      content: "NumPy Cheat Sheet\n\nimport numpy as np\narr = np.array([1, 2, 3])\nnp.mean(arr)\nnp.std(arr)\nnp.dot(a, b)"
+    },
+    {
+      title: "Guia de Matplotlib",
+      icon: "fa-chart-line",
+      desc: "Crie gráficos profissionais para seus relatórios.",
+      content: "Matplotlib Basics\n\nimport matplotlib.pyplot as plt\nplt.plot(x, y)\nplt.title('Título')\nplt.xlabel('Eixo X')\nplt.show()"
+    },
+    {
+      title: "Introdução a Machine Learning",
+      icon: "fa-brain",
+      desc: "Conceitos fundamentais de aprendizado de máquina.",
+      content: "Machine Learning Intro\n\n- Supervisionado vs Não Supervisionado\n- Regressão Linear\n- Árvores de Decisão\n- Redes Neurais"
+    },
+    {
+      title: "Python & SQL: Guia Básico",
+      icon: "fa-database",
+      desc: "Como conectar Python a bancos de dados relacionais.",
+      content: "Python + SQL\n\nimport sqlite3\nconn = sqlite3.connect('db.sqlite')\ncursor = conn.cursor()\ncursor.execute('SELECT * FROM table')"
+    },
+    {
+      title: "Automação com Selenium",
+      icon: "fa-robot",
+      desc: "Controle navegadores web para testes e automação.",
+      content: "Selenium Basics\n\nfrom selenium import webdriver\ndriver = webdriver.Chrome()\ndriver.get('https://google.com')\nelem = driver.find_element(By.NAME, 'q')"
+    },
+    {
+      title: "Web Scraping com BeautifulSoup",
+      icon: "fa-spider",
+      desc: "Extraia dados de páginas HTML facilmente.",
+      content: "BeautifulSoup\n\nfrom bs4 import BeautifulSoup\nsoup = BeautifulSoup(html, 'html.parser')\ntitle = soup.title.string\nlinks = soup.find_all('a')"
+    },
+    {
+      title: "Flask: O Microframework",
+      icon: "fa-flask",
+      desc: "Crie APIs e sites simples rapidamente.",
+      content: "Flask App\n\nfrom flask import Flask\napp = Flask(__name__)\n@app.route('/')\ndef hello():\n    return 'Hello World'"
+    },
+    {
+      title: "Django para Iniciantes",
+      icon: "fa-globe",
+      desc: "Estrutura robusta para desenvolvimento web completo.",
+      content: "Django Basics\n\n- django-admin startproject mysite\n- python manage.py runserver\n- Models, Views, Templates (MVT)"
+    },
+    {
+      title: "Guia de Regex",
+      icon: "fa-code",
+      desc: "Domine expressões regulares para manipulação de texto.",
+      content: "Regex em Python\n\nimport re\nmatch = re.search(r'\d+', 'item 123')\nprint(match.group()) # 123"
+    },
+    {
+      title: "Python Orientado a Objetos",
+      icon: "fa-cubes",
+      desc: "Classes, herança, polimorfismo e encapsulamento.",
+      content: "POO em Python\n\nclass Dog:\n    def __init__(self, name):\n        self.name = name\n    def bark(self):\n        return 'Woof!'"
+    },
+    {
+      title: "Tratamento de Erros",
+      icon: "fa-exclamation-triangle",
+      desc: "Escreva código robusto prevenindo falhas.",
+      content: "Try / Except\n\ntry:\n    x = 1 / 0\nexcept ZeroDivisionError:\n    print('Erro de divisão')"
+    },
+    {
+      title: "Git e GitHub para Python",
+      icon: "fa-code-branch",
+      desc: "Controle de versão essencial para desenvolvedores.",
+      content: "Git Commands\n\n- git init\n- git add .\n- git commit -m 'msg'\n- git push origin main"
+    },
+    {
+      title: "Boas Práticas (PEP 8)",
+      icon: "fa-check-double",
+      desc: "Escreva código Python legível e padronizado.",
+      content: "PEP 8 Highlights\n\n- Indentação de 4 espaços\n- snake_case para funções/variáveis\n- CamelCase para Classes\n- Limite de 79 caracteres por linha"
+    },
+    {
+      title: "Python para Finanças",
+      icon: "fa-money-bill-wave",
+      desc: "Bibliotecas essenciais para análise financeira.",
+      content: "Finance Libs\n\n- pandas-datareader\n- yfinance\n- Cálculo de Retorno e Risco\n- Monte Carlo Simulation"
+    },
+    {
+      title: "Ambientes Virtuais (venv)",
+      icon: "fa-box-open",
+      desc: "Isolando dependências de projetos.",
+      content: "Venv Usage\n\npython -m venv .venv\nsource .venv/bin/activate (Linux/Mac)\n.venv\\Scripts\\activate (Windows)\npip install requests"
     }
   ];
 

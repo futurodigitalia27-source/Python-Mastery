@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 
 // --- SHARED MODAL WRAPPER ---
 const ModalWrapper: React.FC<{ title: string; icon: string; isOpen: boolean; onClose: () => void; children: React.ReactNode }> = ({ title, icon, isOpen, onClose, children }) => {
@@ -122,30 +122,195 @@ export const CertificateModal: React.FC<{ isOpen: boolean; onClose: () => void }
 );
 
 // --- 4. BLOG MODAL ---
-export const BlogModal: React.FC<{ isOpen: boolean; onClose: () => void }> = (props) => (
-  <ModalWrapper title="Blog Técnico" icon="fa-rss" {...props}>
-    <div className="grid gap-4">
-      {[
-        { title: "O que há de novo no Python 3.12?", tag: "News", date: "2 dias atrás" },
-        { title: "Dominando List Comprehensions", tag: "Tutorial", date: "1 semana atrás" },
-        { title: "Como usar IA para debugar código", tag: "Dicas", date: "2 semanas atrás" },
-        { title: "Flask vs Django: Qual escolher?", tag: "Backend", date: "3 semanas atrás" },
-      ].map((post, i) => (
-        <div key={i} className="bg-white/5 hover:bg-white/10 p-4 rounded-xl border border-white/5 cursor-pointer transition-colors group">
-          <div className="flex justify-between items-start mb-2">
-            <span className="text-xs font-bold bg-primary/20 text-primary px-2 py-1 rounded">{post.tag}</span>
-            <span className="text-xs text-muted">{post.date}</span>
+interface BlogPost {
+  id: number;
+  title: string;
+  tag: string;
+  date: string;
+  preview: string;
+  content: string;
+}
+
+const blogPosts: BlogPost[] = [
+  { 
+    id: 1,
+    title: "O que há de novo no Python 3.12?", 
+    tag: "News", 
+    date: "2 dias atrás",
+    preview: "Descubra as melhorias nas mensagens de erro, f-strings mais flexíveis e o impacto na performance da linguagem.",
+    content: `
+      O Python 3.12 trouxe mudanças significativas focadas em experiência do desenvolvedor e performance. Aqui estão os destaques:
+
+      ### 1. Mensagens de Erro Melhoradas
+      O interpretador agora sugere correções mais precisas. Se você esquecer de importar um módulo ou cometer um erro de digitação ('NameError'), o Python 3.12 aponta qual variável você provavelmente queria usar.
+
+      ### 2. F-strings Mais Flexíveis
+      Agora você pode reutilizar as mesmas aspas dentro da f-string que usou para delimitá-la. Isso elimina a necessidade de alternar entre aspas simples e duplas constantemente.
+      Exemplo:
+      \`\`\`python
+      f"O nome do arquivo é {user['name']}"  # Válido no 3.12
+      \`\`\`
+
+      ### 3. Performance
+      Graças a otimizações no bytecode e na gestão de memória, scripts puros em Python podem rodar até 5-10% mais rápido sem nenhuma alteração no código.
+
+      ### Conclusão
+      Atualizar para o 3.12 vale a pena, especialmente para iniciantes que se beneficiarão das mensagens de erro mais didáticas.
+    `
+  },
+  { 
+    id: 2,
+    title: "Dominando List Comprehensions", 
+    tag: "Tutorial", 
+    date: "1 semana atrás",
+    preview: "Aprenda a escrever código Pythonico substituindo loops tradicionais por compreensões de lista elegantes.",
+    content: `
+      List Comprehensions são uma das características mais amadas do Python. Elas permitem criar novas listas de forma concisa.
+
+      ### A Sintaxe
+      \`[expressão for item in iterável if condição]\`
+
+      ### Exemplo Prático
+      Imagine que você quer o quadrado dos números pares de 0 a 9.
+      
+      **Jeito Tradicional:**
+      \`\`\`python
+      quadrados = []
+      for i in range(10):
+          if i % 2 == 0:
+              quadrados.append(i**2)
+      \`\`\`
+
+      **Com List Comprehension:**
+      \`\`\`python
+      quadrados = [i**2 for i in range(10) if i % 2 == 0]
+      \`\`\`
+
+      ### Quando NÃO usar
+      Se a lógica for muito complexa ou tiver muitos loops aninhados, a legibilidade pode ser prejudicada. Nesses casos, prefira o loop \`for\` explícito.
+    `
+  },
+  { 
+    id: 3,
+    title: "Como usar IA para debugar código", 
+    tag: "Dicas", 
+    date: "2 semanas atrás",
+    preview: "Pare de bater cabeça com tracebacks. Veja como assistentes como o Fole podem acelerar seu aprendizado.",
+    content: `
+      Debugar é uma arte, mas com IA, virou uma ciência acelerada.
+
+      ### 1. Explique o Erro
+      Em vez de apenas colar o erro, diga: "Estou tentando fazer um loop while, mas recebi este IndexError". O contexto ajuda a IA a entender sua intenção.
+
+      ### 2. Rubber Duck Debugging
+      Use o chat para explicar seu código linha a linha. Frequentemente, ao explicar para a IA, você mesmo percebe o erro antes dela responder.
+
+      ### 3. Pedindo Refatoração
+      Peça: "Este código funciona, mas como posso deixá-lo mais legível ou eficiente?". A IA pode sugerir bibliotecas padrão que você desconhecia.
+
+      **Dica Pro:** Nunca cole senhas ou chaves de API no chat, mesmo que seja para debugar.
+    `
+  },
+  { 
+    id: 4,
+    title: "Flask vs Django: Qual escolher?", 
+    tag: "Backend", 
+    date: "3 semanas atrás",
+    preview: "Microframework ou Baterias Inclusas? Entenda as diferenças fundamentais para seu próximo projeto web.",
+    content: `
+      A eterna batalha do ecossistema Python Web.
+
+      ### Flask (O Microframework)
+      - **Filosofia:** Minimalista. Te dá o básico (rotas, requisições) e você escolhe o resto (banco de dados, autenticação).
+      - **Ideal para:** Microserviços, APIs simples, projetos onde você quer controle total da arquitetura.
+      - **Curva de aprendizado:** Mais suave inicialmente.
+
+      ### Django (Baterias Inclusas)
+      - **Filosofia:** Tudo pronto. Vem com ORM, Sistema de Admin, Autenticação e Segurança configurados.
+      - **Ideal para:** E-commerces, Redes Sociais, sistemas corporativos complexos, MVPs rápidos ("deadline driven development").
+      - **Curva de aprendizado:** Mais íngreme, mas alta produtividade depois de dominar.
+
+      ### Veredito
+      Comece com Flask para entender como a web funciona "por baixo do capô". Migre para Django quando precisar entregar produtos robustos rapidamente.
+    `
+  },
+];
+
+export const BlogModal: React.FC<{ isOpen: boolean; onClose: () => void }> = (props) => {
+  const [activePost, setActivePost] = useState<BlogPost | null>(null);
+
+  // Reset state when modal closes
+  React.useEffect(() => {
+    if (!props.isOpen) setActivePost(null);
+  }, [props.isOpen]);
+
+  return (
+    <ModalWrapper title="Blog Técnico" icon="fa-rss" {...props}>
+      {activePost ? (
+        <div className="animate-fadeIn">
+          <button 
+            onClick={() => setActivePost(null)}
+            className="mb-4 text-xs font-bold text-muted hover:text-white flex items-center gap-2 transition-colors"
+          >
+            <i className="fas fa-arrow-left"></i> Voltar para a lista
+          </button>
+          
+          <div className="mb-2 flex items-center gap-3">
+             <span className="text-xs font-bold bg-primary/20 text-primary px-2 py-1 rounded">{activePost.tag}</span>
+             <span className="text-xs text-muted">{activePost.date}</span>
           </div>
-          <h4 className="text-white font-bold text-lg group-hover:text-primary transition-colors">{post.title}</h4>
-          <p className="text-sm text-muted mt-2">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore...</p>
-          <div className="mt-3 text-xs font-bold text-gray-400 flex items-center gap-1 group-hover:gap-2 transition-all">
-            Ler Artigo <i className="fas fa-arrow-right"></i>
+          
+          <h2 className="text-2xl font-bold text-white mb-6">{activePost.title}</h2>
+          
+          <div className="text-gray-300 text-sm leading-relaxed whitespace-pre-line space-y-4">
+            {activePost.content.split('```').map((part, index) => {
+              // Simple check: odd indices are likely code blocks in this specific format
+              if (index % 2 === 1) {
+                 const lang = part.split('\n')[0];
+                 const code = part.substring(lang.length);
+                 return (
+                   <div key={index} className="bg-black/30 p-4 rounded-lg border border-white/10 font-mono text-xs text-blue-300 overflow-x-auto my-4">
+                     {code.trim()}
+                   </div>
+                 );
+              }
+              // Bold formatting for headers in content
+              return <span key={index} dangerouslySetInnerHTML={{ __html: part.replace(/### (.*)/g, '<h3 class="text-lg font-bold text-white mt-6 mb-2">$1</h3>').replace(/\*\*(.*)\*\*/g, '<strong class="text-white">$1</strong>') }} />;
+            })}
+          </div>
+
+          <div className="mt-8 pt-8 border-t border-white/10 flex justify-between items-center">
+             <span className="text-xs text-muted">Gostou deste artigo?</span>
+             <div className="flex gap-2">
+               <button className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-muted hover:text-white transition-colors"><i className="far fa-thumbs-up"></i></button>
+               <button className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-muted hover:text-white transition-colors"><i className="far fa-share-square"></i></button>
+             </div>
           </div>
         </div>
-      ))}
-    </div>
-  </ModalWrapper>
-);
+      ) : (
+        <div className="grid gap-4">
+          {blogPosts.map((post) => (
+            <div 
+              key={post.id} 
+              onClick={() => setActivePost(post)}
+              className="bg-white/5 hover:bg-white/10 p-4 rounded-xl border border-white/5 cursor-pointer transition-colors group"
+            >
+              <div className="flex justify-between items-start mb-2">
+                <span className="text-xs font-bold bg-primary/20 text-primary px-2 py-1 rounded">{post.tag}</span>
+                <span className="text-xs text-muted">{post.date}</span>
+              </div>
+              <h4 className="text-white font-bold text-lg group-hover:text-primary transition-colors">{post.title}</h4>
+              <p className="text-sm text-muted mt-2">{post.preview}</p>
+              <div className="mt-3 text-xs font-bold text-gray-400 flex items-center gap-1 group-hover:gap-2 transition-all">
+                Ler Artigo <i className="fas fa-arrow-right"></i>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </ModalWrapper>
+  );
+};
 
 // --- 5. SERVER STATUS MODAL ---
 export const ServerStatusModal: React.FC<{ isOpen: boolean; onClose: () => void }> = (props) => (
