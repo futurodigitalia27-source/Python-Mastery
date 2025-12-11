@@ -1,7 +1,8 @@
-import React from 'react';
+
+import { FC } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 
-const Funcoes: React.FC = () => {
+const Funcoes: FC = () => {
   const { t } = useLanguage();
 
   return (
@@ -57,3 +58,4 @@ const Funcoes: React.FC = () => {
 };
 
 export default Funcoes;
+    

@@ -1,11 +1,12 @@
 
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, KeyboardEvent, ChangeEvent, FC } from 'react';
 import { sendMessageToGemini, speakText, Attachment } from '../services/geminiService';
 import { ChatMessage } from '../types';
 import { useLanguage } from '../contexts/LanguageContext';
 
 interface ChatAssistantProps {
   userName?: string;
+  currentSection?: string;
 }
 
 interface LocalAttachment extends Attachment {
@@ -14,7 +15,7 @@ interface LocalAttachment extends Attachment {
   isAudio?: boolean;
 }
 
-const ChatAssistant: React.FC<ChatAssistantProps> = ({ userName }) => {
+const ChatAssistant: FC<ChatAssistantProps> = ({ userName, currentSection = 'geral' }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -51,12 +52,12 @@ const ChatAssistant: React.FC<ChatAssistantProps> = ({ userName }) => {
             {
               id: 'welcome',
               role: 'model',
-              content: `${getGreeting()}${userName ? ', **' + userName + '**' : ''}! 🚀\n\nSou **Fole**, seu Mentor de Engenharia de Software.\nEstou aqui para elevar seu código ao próximo nível. Em que posso ajudar hoje?`,
+              content: `${getGreeting()}${userName ? ', **' + userName + '**' : ''}! 🚀\n\nSou **Fole**, seu Mentor de Engenharia de Software.\nEstou acompanhando você em **${currentSection.toUpperCase()}**. Como posso ajudar?`,
               timestamp: new Date()
             }
         ]);
     }
-  }, [t, userName, messages.length, language]);
+  }, [t, userName, messages.length, language, currentSection]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -129,7 +130,7 @@ const ChatAssistant: React.FC<ChatAssistantProps> = ({ userName }) => {
   }, [isOpen]);
 
   // --- FILE HANDLING ---
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
       const reader = new FileReader();
@@ -236,7 +237,7 @@ const ChatAssistant: React.FC<ChatAssistantProps> = ({ userName }) => {
     };
     setMessages(prev => [...prev, userMsg]);
 
-    const responseText = await sendMessageToGemini(textToSend, language, currentVoiceMode, currentAttachments);
+    const responseText = await sendMessageToGemini(textToSend, language, currentVoiceMode, currentAttachments, currentSection);
 
     const modelMsg: ChatMessage = {
       id: (Date.now() + 1).toString(),
@@ -249,7 +250,7 @@ const ChatAssistant: React.FC<ChatAssistantProps> = ({ userName }) => {
     setIsLoading(false);
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSend();
@@ -327,7 +328,10 @@ const ChatAssistant: React.FC<ChatAssistantProps> = ({ userName }) => {
             </div>
             <div>
               <h3 className="font-bold text-white text-xs tracking-wide">Fole Assistant</h3>
-              <p className="text-[9px] text-muted uppercase tracking-wider font-medium">AI Mentor v2.1</p>
+              <p className="text-[9px] text-muted uppercase tracking-wider font-medium flex items-center gap-1">
+                 <span className="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                 {currentSection}
+              </p>
             </div>
           </div>
           <div className="flex items-center gap-1">

@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import { useState, FC } from 'react';
 import { User } from '../types';
 import { useLanguage } from '../contexts/LanguageContext';
 
@@ -10,7 +11,7 @@ interface NavigationProps {
   onOpenAuth: () => void;
 }
 
-const Navigation: React.FC<NavigationProps> = ({ user, activeSection, scrollToSection, onLogout, onOpenAuth }) => {
+const Navigation: FC<NavigationProps> = ({ user, activeSection, scrollToSection, onLogout, onOpenAuth }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { language, setLanguage, t } = useLanguage();
 
@@ -134,3 +135,4 @@ const Navigation: React.FC<NavigationProps> = ({ user, activeSection, scrollToSe
 };
 
 export default Navigation;
+    

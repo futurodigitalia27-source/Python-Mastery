@@ -1,4 +1,5 @@
-import React from 'react';
+
+import { FC } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 
 interface HeroProps {
@@ -6,7 +7,7 @@ interface HeroProps {
   onOpenStudentArea: () => void;
 }
 
-const Hero: React.FC<HeroProps> = ({ onStart, onOpenStudentArea }) => {
+const Hero: FC<HeroProps> = ({ onStart, onOpenStudentArea }) => {
   const { t } = useLanguage();
 
   return (
@@ -61,3 +62,4 @@ const Hero: React.FC<HeroProps> = ({ onStart, onOpenStudentArea }) => {
 };
 
 export default Hero;
+    

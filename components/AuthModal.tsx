@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import { useState, FC, FormEvent } from 'react';
 import { User } from '../types';
 
 interface AuthModalProps {
@@ -9,7 +9,7 @@ interface AuthModalProps {
   canClose: boolean; // Propriedade para controlar se o modal pode ser fechado
 }
 
-const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, canClose }) => {
+const AuthModal: FC<AuthModalProps> = ({ isOpen, onClose, onLogin, canClose }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
@@ -19,7 +19,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, canClos
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     
@@ -245,3 +245,4 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, canClos
 };
 
 export default AuthModal;
+    

@@ -1,4 +1,3 @@
-
 import { GoogleGenAI, Chat, Modality, Content, Part } from "@google/genai";
 import { Language } from '../types';
 
@@ -9,25 +8,27 @@ const ai = new GoogleGenAI({ apiKey });
 
 // Enhanced System instruction for Fole - Professional & Dynamic
 const SYSTEM_INSTRUCTION = `
-Você é **Fole**, um Mentor de Inteligência Artificial de elite, especializado em Engenharia de Software e Python.
-Sua missão não é apenas responder, mas **elevar** o nível técnico do usuário.
+VOZ E PERSONA:
+Você é **Fole**, um Engenheiro de Software Sênior e Mentor Técnico de elite.
+Sua comunicação deve ser:
+1. **Executiva e Precisa**: Vá direto ao ponto. Evite preâmbulos desnecessários como "Claro, posso ajudar com isso".
+2. **Socrática**: Quando o usuário tiver dúvidas conceituais, faça perguntas que guiem ao entendimento antes de dar a resposta.
+3. **Orientada a Qualidade**: Sempre priorize Clean Code, SOLID e boas práticas de PEP-8.
+4. **Contextual**: Você tem consciência de onde o usuário está na plataforma (ex: Laboratório, Fundamentos). Use isso.
 
-**Sua Persona:**
-*   **Profissional e Executivo:** Use linguagem clara, precisa e livre de rodeios. Evite gírias excessivas.
-*   **Método Socrático:** Quando o usuário fizer perguntas conceituais, guie-o ao raciocínio antes de dar a resposta final.
-*   **Engenheiro Sênior:** Se o código do usuário funcionar mas for "feio", sugira refatoração (Clean Code) e boas práticas (PEP-8).
-*   **Bilíngue:** Responda estritamente no idioma detectado ou solicitado (Português/Inglês).
+ESTRUTURA DE RESPOSTA TÉCNICA:
+- **Diagnóstico**: Identifique o problema ou objetivo em 1 frase.
+- **Solução**: Código robusto, tipado (Type Hints em Python) e comentado.
+- **Deep Dive (Opcional)**: Explique o "porquê" arquitetural ou mencione complexidade Big O se relevante.
 
-**Estrutura de Resposta Padrão:**
-1.  **Síntese Direta:** Resposta objetiva em 1-2 frases.
-2.  **Solução Técnica:** Código otimizado (se aplicável), usando Markdown e comentários explicativos nas linhas complexas.
-3.  **Aprofundamento (Opcional):** Se houver conceitos avançados relacionados (ex: Big O notation, Design Patterns), mencione-os brevemente como "Dica Pro".
+REGRAS RÍGIDAS:
+- Responda no idioma do usuário (pt-BR por padrão, adaptado dinamicamente).
+- Se analisar código com erro, explique a causa raiz, não apenas a correção.
+- Use formatação Markdown avançada (tabelas para comparações, blocos de código com linguagem especificada).
+- Em áudio, seja mais conversacional e menos "máquina de ler código".
 
-**Capacidades Multimodais:**
-*   Analise imagens de erros, diagramas ou código manuscrito com precisão.
-*   Se o usuário enviar áudio, responda de forma mais conversacional e menos técnica, focando no conceito.
-
-**Tom de Voz:** Encorajador, mas tecnicamente rigoroso. Você quer que o usuário se torne um desenvolvedor melhor a cada interação.
+SEU OBJETIVO:
+Transformar o usuário de um codificador iniciante em um Engenheiro de Software completo.
 `;
 
 let chatSession: Chat | null = null;
@@ -78,19 +79,39 @@ export const sendMessageToGemini = async (
   message: string, 
   language: Language = 'pt', 
   isVoiceMode: boolean = false,
-  attachments: Attachment[] = []
+  attachments: Attachment[] = [],
+  currentSection: string = 'geral'
 ): Promise<string> => {
   try {
     const session = getChatSession();
     
-    // Hint the language in the message if needed
-    let instructions = `(Context: User Language is ${language === 'pt' ? 'Portuguese' : 'English'}. Be concise and helpful.)`;
-    let contextMessage = message ? `${instructions} ${message}` : instructions;
+    // Dynamic Context Injection
+    const contextMap: Record<string, string> = {
+      'hero': 'O usuário está na Home Page. Incentive-o a começar.',
+      'fundamentos': 'O usuário está estudando Lógica e Algoritmos (Sequência, Fluxogramas, Loops).',
+      'variaveis': 'O usuário está no módulo de Variáveis e Tipos de Dados.',
+      'funcoes': 'O usuário está aprendendo Funções e Modularização.',
+      'lab': 'O usuário está no Laboratório de Código (IDE). Foco total em sintaxe e debug.',
+      'dashboard': 'O usuário está vendo seu progresso.',
+    };
+
+    const sectionContext = contextMap[currentSection] || 'O usuário está navegando na plataforma.';
+    
+    let instructions = `
+    [CONTEXTO DINÂMICO]
+    Localização: ${currentSection}
+    Situação: ${sectionContext}
+    Idioma: ${language === 'pt' ? 'Português' : 'Inglês'}
+    
+    Responda à seguinte mensagem do usuário com base neste contexto:
+    `;
+
+    let contextMessage = message ? `${instructions}\n\nUser: ${message}` : instructions;
     
     // Construct the payload parts
-    const parts: any[] = []; // Use any to allow flexibility with the SDK types for sendMessage
+    const parts: any[] = []; 
     
-    // Add attachments first (Images, Audio, Files)
+    // Add attachments first
     if (attachments.length > 0) {
       attachments.forEach(att => {
         parts.push({ 
@@ -107,17 +128,17 @@ export const sendMessageToGemini = async (
       parts.push({ text: contextMessage });
     }
 
-    // If no parts (empty message and no attachments), don't send
+    // If no parts, don't send
     if (parts.length === 0) return "";
 
     if (isVoiceMode) {
-      // 1. Start Audio Generation in Parallel (Low Latency)
+      // 1. Start Audio Generation in Parallel
       session.getHistory().then((history) => {
          const audioPrompt = `
-          [INSTRUÇÃO DE MODO DE VOZ ATIVO]
-          - O usuário está falando com você.
-          - Responda de forma curta (máximo 2 frases).
-          - Use tom natural, como um colega de trabalho sênior.
+          [MODO DE VOZ ATIVO]
+          - Resposta curta e natural (máximo 2 frases).
+          - Aja como um colega sênior em uma call.
+          - Contexto: ${sectionContext}
          `;
          
          const audioContents: Content[] = [
@@ -125,7 +146,6 @@ export const sendMessageToGemini = async (
            { role: 'user', parts: [{ text: `${audioPrompt}` }, ...parts] }
          ];
 
-         // Use Native Audio model for faster, more natural speech generation
          ai.models.generateContent({
            model: 'gemini-2.5-flash-native-audio-preview-09-2025',
            contents: audioContents,
@@ -148,9 +168,9 @@ export const sendMessageToGemini = async (
 
       // Add instruction for text model
       if (parts.length > 0 && parts[parts.length - 1].text) {
-          parts[parts.length - 1].text += ` [VOICE MODE ON: Keep text response concise and conversational]`;
+          parts[parts.length - 1].text += ` [VOICE MODE ON: Responda de forma sucinta e direta]`;
       } else {
-          parts.push({ text: `[VOICE MODE ON: Keep text response concise]` });
+          parts.push({ text: `[VOICE MODE ON: Responda de forma sucinta]` });
       }
     }
 
@@ -159,11 +179,10 @@ export const sendMessageToGemini = async (
     return result.text || "Desculpe, não consegui gerar uma resposta de texto no momento.";
   } catch (error) {
     console.error("Gemini API Error:", error);
-    return "⚠️ **System Error**: My connection to the AI core has been interrupted.";
+    return "⚠️ **System Error**: Conexão com o núcleo de IA interrompida. Tente novamente.";
   }
 };
 
-// New function specifically for the Laboratory Error Robot
 export const analyzeCodeError = async (code: string, errorOutput: string, exerciseTitle: string, language: Language = 'pt'): Promise<string> => {
   try {
     const langInstruction = language === 'pt' 
@@ -203,7 +222,6 @@ export const analyzeCodeError = async (code: string, errorOutput: string, exerci
   }
 };
 
-// --- QUIZ ERROR EXPLANATION ---
 export const explainQuizConcept = async (question: string, wrongOption: string, correctOption: string, language: Language = 'pt'): Promise<string> => {
   try {
     const prompt = `
@@ -232,7 +250,6 @@ export const explainQuizConcept = async (question: string, wrongOption: string, 
   }
 };
 
-// --- GAME & QUIZ ASSISTANT HELPER ---
 export const getContextualHelp = async (context: string, currentData: any, language: Language = 'pt'): Promise<string> => {
   try {
     const prompt = `
@@ -256,7 +273,6 @@ export const getContextualHelp = async (context: string, currentData: any, langu
   }
 };
 
-// --- DYNAMIC CONTENT GENERATION ---
 export const generateLogicPuzzle = async (level: number): Promise<{ title: string; desc: string; code: string; options: string[]; correct: number }> => {
   try {
     const prompt = `
@@ -320,8 +336,6 @@ export const generateQuizQuestions = async (count: number = 5): Promise<any[]> =
   }
 };
 
-
-// --- TTS (Text-to-Speech) Functionality ---
 export const speakText = async (text: string) => {
   try {
     const cleanText = text.replace(/```[\s\S]*?```/g, " [Código] ").replace(/[*#`]/g, '');
@@ -351,7 +365,6 @@ export const speakText = async (text: string) => {
   }
 };
 
-// Helper functions for Audio Decoding
 function decode(base64: string) {
   const binaryString = atob(base64);
   const len = binaryString.length;

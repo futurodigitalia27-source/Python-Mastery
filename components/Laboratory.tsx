@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
+
+import { useState, useEffect, useRef, FC } from 'react';
 import { Exercise } from '../types';
 import { analyzeCodeError } from '../services/geminiService';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -166,7 +167,7 @@ const exercises: Exercise[] = [
   }
 ];
 
-const Laboratory: React.FC = () => {
+const Laboratory: FC = () => {
   const [activeExercise, setActiveExercise] = useState<Exercise>(exercises[0]);
   const [code, setCode] = useState(activeExercise.template);
   const [output, setOutput] = useState("");
@@ -327,7 +328,7 @@ const Laboratory: React.FC = () => {
               </div>
               <div>
                 <h3 className="text-white text-sm font-bold">{t.lab.debugger_title}</h3>
-                <p className="text-[10px] text-red-300">{t.lab.debugger_sub}</p>
+                <p className="text--[10px] text-red-300">{t.lab.debugger_sub}</p>
               </div>
             </div>
             

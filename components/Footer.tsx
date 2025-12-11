@@ -1,6 +1,5 @@
 
-
-import React from 'react';
+import { FC } from 'react';
 
 interface FooterProps {
   onOpenLiveClass: () => void;
@@ -13,7 +12,7 @@ interface FooterProps {
   onOpenRobotCreation: () => void;
 }
 
-const Footer: React.FC<FooterProps> = ({ 
+const Footer: FC<FooterProps> = ({ 
   onOpenLiveClass, 
   onOpenRoadmap, 
   onOpenCommunity, 
@@ -106,3 +105,4 @@ const Footer: React.FC<FooterProps> = ({
 };
 
 export default Footer;
+    

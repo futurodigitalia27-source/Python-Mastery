@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, FC, FormEvent } from 'react';
 import { explainQuizConcept, getContextualHelp, generateLogicPuzzle, generateQuizQuestions } from '../services/geminiService';
 import { useLanguage } from '../contexts/LanguageContext';
 
@@ -164,11 +164,10 @@ const initialQuizQuestions = [
     correct: 2,
     explanation: "`False` e `True` são os dois valores possíveis do tipo Booleano (`bool`)."
   },
-  // ... (More static questions could be here) ...
 ];
 
 // --- HELPER COMPONENT FOR ASSISTANT OVERLAY ---
-const AssistantOverlay: React.FC<{ 
+const AssistantOverlay: FC<{ 
   onAskHelp: () => void; 
   isLoading: boolean; 
   hint: string | null; 
@@ -217,7 +216,7 @@ interface BriefingProps {
   onExit: () => void;
 }
 
-const GameBriefing: React.FC<BriefingProps> = ({ title, mission, instructions, color, icon, onStart, onExit }) => {
+const GameBriefing: FC<BriefingProps> = ({ title, mission, instructions, color, icon, onStart, onExit }) => {
   return (
     <div className="flex flex-col items-center justify-center h-full w-full animate-fadeIn max-w-lg mx-auto">
       <div className={`w-24 h-24 rounded-2xl bg-gradient-to-br ${color} flex items-center justify-center text-4xl shadow-2xl mb-8 animate-float-slow`}>
@@ -271,7 +270,7 @@ const GameBriefing: React.FC<BriefingProps> = ({ title, mission, instructions, c
 // --- GAME COMPONENTS ---
 
 // 1. SNAKE GAME COMPONENT
-const SnakeGame: React.FC<{ onExit: () => void }> = ({ onExit }) => {
+const SnakeGame: FC<{ onExit: () => void }> = ({ onExit }) => {
   const GRID_SIZE = 20;
   const INITIAL_SPEED = 150;
   
@@ -435,7 +434,7 @@ const SnakeGame: React.FC<{ onExit: () => void }> = ({ onExit }) => {
 };
 
 // 2. BINARY BLITZ GAME COMPONENT
-const BinaryGame: React.FC<{ onExit: () => void }> = ({ onExit }) => {
+const BinaryGame: FC<{ onExit: () => void }> = ({ onExit }) => {
   const [targetNumber, setTargetNumber] = useState(0);
   const [input, setInput] = useState('');
   const [score, setScore] = useState(0);
@@ -487,7 +486,7 @@ const BinaryGame: React.FC<{ onExit: () => void }> = ({ onExit }) => {
     };
   }, [isPlaying, gameOver, difficulty]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     const binaryString = targetNumber.toString(2);
     
@@ -597,7 +596,7 @@ const BinaryGame: React.FC<{ onExit: () => void }> = ({ onExit }) => {
 };
 
 // 3. BUG HUNTER GAME COMPONENT
-const BugHunterGame: React.FC<{ onExit: () => void }> = ({ onExit }) => {
+const BugHunterGame: FC<{ onExit: () => void }> = ({ onExit }) => {
   const [problems, setProblems] = useState<any[]>([
     {
       id: 1,
@@ -742,7 +741,7 @@ const BugHunterGame: React.FC<{ onExit: () => void }> = ({ onExit }) => {
 };
 
 // 4. MEMORY TYPES GAME
-const MemoryTypesGame: React.FC<{ onExit: () => void }> = ({ onExit }) => {
+const MemoryTypesGame: FC<{ onExit: () => void }> = ({ onExit }) => {
   interface Card { id: number; content: string; type: string; isFlipped: boolean; isMatched: boolean; isValue: boolean }
   
   const [cards, setCards] = useState<Card[]>([]);
@@ -880,7 +879,7 @@ const MemoryTypesGame: React.FC<{ onExit: () => void }> = ({ onExit }) => {
 };
 
 // 5. DYNAMIC LOGIC PUZZLE GAME (Generative AI Levels)
-const LogicPuzzleGame: React.FC<{ level: number; onExit: () => void }> = ({ level, onExit }) => {
+const LogicPuzzleGame: FC<{ level: number; onExit: () => void }> = ({ level, onExit }) => {
   const [puzzle, setPuzzle] = useState<{ title: string; desc: string; code: string; options: string[]; correct: number } | null>(null);
   const [loading, setLoading] = useState(true);
   const [completed, setCompleted] = useState(false);
@@ -989,7 +988,7 @@ const LogicPuzzleGame: React.FC<{ level: number; onExit: () => void }> = ({ leve
 
 // --- MAIN COMPONENT ---
 
-const EmentaModal: React.FC<EmentaModalProps> = ({ isOpen, onClose }) => {
+const EmentaModal: FC<EmentaModalProps> = ({ isOpen, onClose }) => {
   const [activeTab, setActiveTab] = useState('trilha');
   
   // Game State

@@ -1,10 +1,10 @@
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, FC } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 
 // --- MINI GAMES FOR VARIABLES ---
 
-const IntGame: React.FC = () => {
+const IntGame: FC = () => {
   const [count, setCount] = useState(0);
   const target = 10;
   
@@ -35,7 +35,7 @@ const IntGame: React.FC = () => {
   );
 };
 
-const FloatGame: React.FC = () => {
+const FloatGame: FC = () => {
   const [level, setLevel] = useState(0.0);
   const target = 7.5;
 
@@ -70,7 +70,7 @@ const FloatGame: React.FC = () => {
   );
 };
 
-const StringGame: React.FC = () => {
+const StringGame: FC = () => {
   const [parts, setParts] = useState<string[]>([]);
   const target = "Olá Mundo";
 
@@ -105,7 +105,7 @@ const StringGame: React.FC = () => {
   );
 };
 
-const BoolGame: React.FC = () => {
+const BoolGame: FC = () => {
   const [switches, setSwitches] = useState([false, false]);
   const isOn = switches[0] && switches[1]; // AND Logic
 
@@ -155,7 +155,7 @@ const BoolGame: React.FC = () => {
 
 type VariableType = 'int' | 'float' | 'str' | 'bool';
 
-const Variaveis: React.FC = () => {
+const Variaveis: FC = () => {
   const { t, language } = useLanguage();
   const [activeVar, setActiveVar] = useState<VariableType | null>(null);
   const [activeTab, setActiveTab] = useState<'theory' | 'practice' | 'game' | 'quiz'>('theory');
@@ -510,3 +510,4 @@ const Variaveis: React.FC = () => {
 };
 
 export default Variaveis;
+    

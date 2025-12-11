@@ -1,8 +1,8 @@
 
-import React, { useState } from 'react';
+import { useState, FC, ReactNode, useEffect } from 'react';
 
 // --- SHARED MODAL WRAPPER ---
-const ModalWrapper: React.FC<{ title: string; icon: string; isOpen: boolean; onClose: () => void; children: React.ReactNode }> = ({ title, icon, isOpen, onClose, children }) => {
+const ModalWrapper: FC<{ title: string; icon: string; isOpen: boolean; onClose: () => void; children: ReactNode }> = ({ title, icon, isOpen, onClose, children }) => {
   if (!isOpen) return null;
   return (
     <div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/90 backdrop-blur-sm animate-fadeIn p-4">
@@ -154,7 +154,7 @@ const tracksData: RoadmapTrack[] = [
 ];
 
 // --- 1. ROADMAP MODAL ---
-export const RoadmapModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, onClose }) => {
+export const RoadmapModal: FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, onClose }) => {
   const [selectedTrackId, setSelectedTrackId] = useState<string | null>(null);
 
   const selectedTrack = tracksData.find(t => t.id === selectedTrackId);
@@ -307,7 +307,7 @@ export const RoadmapModal: React.FC<{ isOpen: boolean; onClose: () => void }> = 
 };
 
 // --- 2. COMMUNITY MODAL ---
-export const CommunityModal: React.FC<{ isOpen: boolean; onClose: () => void }> = (props) => (
+export const CommunityModal: FC<{ isOpen: boolean; onClose: () => void }> = (props) => (
   <ModalWrapper title="Comunidade Global" icon="fa-users" {...props}>
     <div className="text-center mb-8">
       <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-[#5865F2]/20 text-[#5865F2] text-4xl mb-4 border border-[#5865F2]/30">
@@ -339,7 +339,7 @@ export const CommunityModal: React.FC<{ isOpen: boolean; onClose: () => void }> 
 );
 
 // --- 3. CERTIFICATE MODAL ---
-export const CertificateModal: React.FC<{ isOpen: boolean; onClose: () => void }> = (props) => (
+export const CertificateModal: FC<{ isOpen: boolean; onClose: () => void }> = (props) => (
   <ModalWrapper title="Certificação Oficial" icon="fa-certificate" {...props}>
     <div className="bg-gradient-to-br from-[#1a202c] to-[#0f1720] p-1 rounded-xl border border-yellow-500/30 mb-6 shadow-2xl">
       <div className="border border-white/10 p-8 rounded-lg relative overflow-hidden bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]">
@@ -489,11 +489,11 @@ const blogPosts: BlogPost[] = [
   },
 ];
 
-export const BlogModal: React.FC<{ isOpen: boolean; onClose: () => void }> = (props) => {
+export const BlogModal: FC<{ isOpen: boolean; onClose: () => void }> = (props) => {
   const [activePost, setActivePost] = useState<BlogPost | null>(null);
 
   // Reset state when modal closes
-  React.useEffect(() => {
+  useEffect(() => {
     if (!props.isOpen) setActivePost(null);
   }, [props.isOpen]);
 
@@ -566,7 +566,7 @@ export const BlogModal: React.FC<{ isOpen: boolean; onClose: () => void }> = (pr
 };
 
 // --- 5. SERVER STATUS MODAL ---
-export const ServerStatusModal: React.FC<{ isOpen: boolean; onClose: () => void }> = (props) => (
+export const ServerStatusModal: FC<{ isOpen: boolean; onClose: () => void }> = (props) => (
   <ModalWrapper title="Status do Sistema" icon="fa-server" {...props}>
     <div className="bg-green-500/10 border border-green-500/20 p-4 rounded-xl flex items-center gap-4 mb-6">
       <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-white text-xl animate-pulse shadow-[0_0_15px_rgba(34,197,94,0.5)]">

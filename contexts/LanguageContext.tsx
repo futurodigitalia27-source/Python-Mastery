@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState } from 'react';
+
+import { createContext, useContext, useState, ReactNode, FC } from 'react';
 import { Language } from '../types';
 import { translations } from '../utils/translations';
 
@@ -10,7 +11,7 @@ interface LanguageContextType {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
-export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const LanguageProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [language, setLanguage] = useState<Language>('pt');
 
   const t = translations[language];

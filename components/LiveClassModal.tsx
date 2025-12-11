@@ -1,11 +1,11 @@
-import React from 'react';
+import { FC } from 'react';
 
 interface LiveClassModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const LiveClassModal: React.FC<LiveClassModalProps> = ({ isOpen, onClose }) => {
+const LiveClassModal: FC<LiveClassModalProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
@@ -53,33 +53,25 @@ const LiveClassModal: React.FC<LiveClassModalProps> = ({ isOpen, onClose }) => {
             </button>
 
             <button className="w-full flex items-center gap-4 p-4 bg-white/5 hover:bg-white/10 border border-white/5 hover:border-primary/30 rounded-xl transition-all group text-left">
-              <div className="w-10 h-10 rounded-lg bg-[#00796b] flex items-center justify-center text-white text-xl shadow-lg">
-                <i className="fas fa-video"></i>
+              <div className="w-10 h-10 rounded-lg bg-[#5865F2] flex items-center justify-center text-white text-xl shadow-lg">
+                <i className="fab fa-discord"></i>
               </div>
               <div>
-                <div className="font-bold text-white group-hover:text-primary transition-colors">Google Meet</div>
-                <div className="text-xs text-muted">Sala interativa • Perguntas ao vivo</div>
+                <div className="font-bold text-white group-hover:text-primary transition-colors">Discord VIP</div>
+                <div className="text-xs text-muted">Compartilhamento de tela • Voz</div>
               </div>
             </button>
 
             <button className="w-full flex items-center gap-4 p-4 bg-white/5 hover:bg-white/10 border border-white/5 hover:border-primary/30 rounded-xl transition-all group text-left">
-              <div className="w-10 h-10 rounded-lg bg-[#2d8cff] flex items-center justify-center text-white text-xl shadow-lg">
-                <i className="fas fa-video"></i>
+              <div className="w-10 h-10 rounded-lg bg-[#9146FF] flex items-center justify-center text-white text-xl shadow-lg">
+                <i className="fab fa-twitch"></i>
               </div>
               <div>
-                <div className="font-bold text-white group-hover:text-primary transition-colors">Zoom</div>
-                <div className="text-xs text-muted">Vídeo conferência • Breakout rooms</div>
+                <div className="font-bold text-white group-hover:text-primary transition-colors">Twitch</div>
+                <div className="text-xs text-muted">Interatividade alta</div>
               </div>
             </button>
           </div>
-
-          {/* Calendar Button */}
-          <button 
-            className="w-full py-3 border border-white/10 hover:bg-white/5 rounded-xl text-sm font-medium text-white transition-colors flex items-center justify-center gap-2"
-            onClick={() => window.open('https://calendar.google.com', '_blank')}
-          >
-            <i className="far fa-calendar-alt text-blue-400"></i> Adicionar ao Google Agenda
-          </button>
 
         </div>
       </div>

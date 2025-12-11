@@ -1,4 +1,5 @@
-import React from 'react';
+
+import { FC } from 'react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
 const data = [
@@ -11,7 +12,7 @@ const data = [
   { name: 'Dom', xp: 950 },
 ];
 
-const Dashboard: React.FC = () => {
+const Dashboard: FC = () => {
   return (
     <section id="dashboard" className="snap-section flex items-center justify-center p-6">
       <div className="w-full max-w-6xl">
@@ -102,3 +103,4 @@ const Dashboard: React.FC = () => {
 };
 
 export default Dashboard;
+    

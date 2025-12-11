@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, FC } from 'react';
 
 interface RobotCreationModalProps {
   isOpen: boolean;
@@ -43,7 +43,7 @@ const quizData = [
   }
 ];
 
-const RobotCreationModal: React.FC<RobotCreationModalProps> = ({ isOpen, onClose }) => {
+const RobotCreationModal: FC<RobotCreationModalProps> = ({ isOpen, onClose }) => {
   const [activeTab, setActiveTab] = useState('planejar');
   const [toastMessage, setToastMessage] = useState('');
   const [showToast, setShowToast] = useState(false);
@@ -332,3 +332,4 @@ const RobotCreationModal: React.FC<RobotCreationModalProps> = ({ isOpen, onClose
 };
 
 export default RobotCreationModal;
+    

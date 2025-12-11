@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Navigation from './components/Navigation';
 import Hero from './components/Hero';
 import Fundamentos from './components/Fundamentos';
@@ -105,7 +105,7 @@ function App() {
       </main>
 
       {/* Chat is only available if logged in to avoid clutter over auth modal */}
-      {user && <ChatAssistant userName={user?.name} />}
+      {user && <ChatAssistant userName={user?.name} currentSection={activeSection} />}
       
       {/* Primary Modals */}
       <AuthModal 

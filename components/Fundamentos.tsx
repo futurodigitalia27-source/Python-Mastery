@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+
+import { useState, useEffect, FC, ReactNode } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 
 type LogicTopic = 'sequencia' | 'fluxograma' | 'repeticao';
@@ -18,13 +19,13 @@ interface DetailedContent {
     title: string;
     items: string[];
   };
-  visualComponent: React.ReactNode;
+  visualComponent: ReactNode;
 }
 
 // --- MINI GAMES COMPONENTS ---
 
 // 1. SEQUENCE GAME
-const SequenceGame: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
+const SequenceGame: FC<{ onComplete: () => void }> = ({ onComplete }) => {
   const [availableSteps, setAvailableSteps] = useState([
     { id: '3', text: 'Servir na xícara' },
     { id: '1', text: 'Esquentar água' },
@@ -124,7 +125,7 @@ const SequenceGame: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
 };
 
 // 2. FLOWCHART GAME
-const FlowchartGame: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
+const FlowchartGame: FC<{ onComplete: () => void }> = ({ onComplete }) => {
   const [batteryLevel, setBatteryLevel] = useState(50);
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [feedback, setFeedback] = useState("");
@@ -231,7 +232,7 @@ const FlowchartGame: React.FC<{ onComplete: () => void }> = ({ onComplete }) => 
 };
 
 // 3. LOOP GAME
-const LoopGame: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
+const LoopGame: FC<{ onComplete: () => void }> = ({ onComplete }) => {
   const [targetApples, setTargetApples] = useState(5);
   const [inputValue, setInputValue] = useState("");
   const [collected, setCollected] = useState(0);
@@ -345,7 +346,7 @@ const LoopGame: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
 };
 
 // --- QUIZ COMPONENT ---
-const MiniQuiz: React.FC<{ topic: LogicTopic }> = ({ topic }) => {
+const MiniQuiz: FC<{ topic: LogicTopic }> = ({ topic }) => {
   const [answered, setAnswered] = useState<number | null>(null);
 
   const quizzes = {
@@ -402,7 +403,7 @@ const MiniQuiz: React.FC<{ topic: LogicTopic }> = ({ topic }) => {
 };
 
 
-const Fundamentos: React.FC = () => {
+const Fundamentos: FC = () => {
   const { t, language } = useLanguage();
   const [activeTopic, setActiveTopic] = useState<LogicTopic | null>(null);
   const [activeTab, setActiveTab] = useState<'theory' | 'practice'>('theory');
@@ -766,3 +767,4 @@ const Fundamentos: React.FC = () => {
 };
 
 export default Fundamentos;
+    
