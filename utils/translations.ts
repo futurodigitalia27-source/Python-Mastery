@@ -1,3 +1,4 @@
+
 export const translations = {
   pt: {
     nav: {
@@ -28,8 +29,8 @@ export const translations = {
       card3_desc: 'Automação é poder. Execute tarefas milhares de vezes sem cansar usando Loops.'
     },
     variaveis: {
-      title: 'Sistema de Variáveis',
-      desc: 'Variáveis são caixas onde guardamos informações. Em Python, elas são dinâmicas e poderosas.',
+      title: 'Sistema de Variáveis Interativo',
+      desc: 'Variáveis são a memória do computador. Experimente nossos simuladores de Games e Redes Sociais para ver como textos (strings), números (ints/floats) e lógica (bools) ganham vida em aplicações reais.',
       ex_title: 'Exemplo Prático',
       types: {
         int: { desc: 'Números inteiros para contagens e matemática discreta.' },
@@ -91,8 +92,8 @@ export const translations = {
       card3_desc: 'Automation is power. Execute tasks thousands of times without tiring using Loops.'
     },
     variaveis: {
-      title: 'Variable System',
-      desc: 'Variables are boxes where we store information. In Python, they are dynamic and powerful.',
+      title: 'Interactive Variable System',
+      desc: 'Variables are the computer\'s memory. Try our Game and Social Media simulators to see how text (strings), numbers (ints/floats) and logic (bools) come to life in real apps.',
       ex_title: 'Practical Example',
       types: {
         int: { desc: 'Integer numbers for counting and discrete mathematics.' },

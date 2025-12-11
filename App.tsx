@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Navigation from './components/Navigation';
 import Hero from './components/Hero';
@@ -19,9 +20,11 @@ function App() {
   const [activeSection, setActiveSection] = useState('hero');
   const [user, setUser] = useState<User | null>(null);
   
-  // Modal States
-  const [isAuthOpen, setIsAuthOpen] = useState(false);
-  const [isStudentAreaOpen, setIsStudentAreaOpen] = useState(false); // Renamed from isEmentaOpen
+  // Auth Modal State - Start true if no user
+  const [isAuthOpen, setIsAuthOpen] = useState(true);
+
+  // Other Modal States
+  const [isStudentAreaOpen, setIsStudentAreaOpen] = useState(false);
   const [isLiveClassOpen, setIsLiveClassOpen] = useState(false);
   const [isRoadmapOpen, setIsRoadmapOpen] = useState(false);
   const [isCommunityOpen, setIsCommunityOpen] = useState(false);
@@ -29,6 +32,14 @@ function App() {
   const [isBlogOpen, setIsBlogOpen] = useState(false);
   const [isStatusOpen, setIsStatusOpen] = useState(false);
   const [isRobotCreationOpen, setIsRobotCreationOpen] = useState(false);
+
+  // Initial Auth Check
+  useEffect(() => {
+    // Here we enforce the modal to stay open if no user
+    if (!user) {
+      setIsAuthOpen(true);
+    }
+  }, [user]);
 
   // Scroll Spy Logic
   useEffect(() => {
@@ -51,17 +62,27 @@ function App() {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  const handleLogin = (u: User) => {
+    setUser(u);
+    setIsAuthOpen(false);
+  };
+
   return (
-    <div className="bg-bg min-h-screen text-white relative">
+    <div className={`bg-bg min-h-screen text-white relative ${!user ? 'overflow-hidden h-screen' : ''}`}>
+      
+      {/* Background is rendered but might be covered by modal */}
       <Navigation 
         user={user} 
         activeSection={activeSection}
         scrollToSection={scrollToSection}
-        onLogout={() => setUser(null)}
+        onLogout={() => {
+          setUser(null);
+          setIsAuthOpen(true);
+        }}
         onOpenAuth={() => setIsAuthOpen(true)}
       />
 
-      <main className="snap-container h-screen w-full">
+      <main className={`snap-container h-screen w-full transition-all duration-500 ${!user ? 'blur-sm scale-[0.99] opacity-50 pointer-events-none' : 'blur-0 scale-100 opacity-100'}`}>
         <Hero 
           onStart={() => scrollToSection('fundamentos')} 
           onOpenStudentArea={() => setIsStudentAreaOpen(true)}
@@ -83,36 +104,39 @@ function App() {
         />
       </main>
 
-      <ChatAssistant userName={user?.name} />
+      {/* Chat is only available if logged in to avoid clutter over auth modal */}
+      {user && <ChatAssistant userName={user?.name} />}
       
       {/* Primary Modals */}
       <AuthModal 
         isOpen={isAuthOpen} 
-        onClose={() => setIsAuthOpen(false)}
-        onLogin={(u) => {
-          setUser(u);
-          setIsAuthOpen(false);
-        }}
+        onClose={() => user && setIsAuthOpen(false)} // Only closeable if user exists (updates profile mode)
+        onLogin={handleLogin}
+        canClose={!!user} // Pass prop to control close button visibility
       />
-      <EmentaModal 
-        isOpen={isStudentAreaOpen} 
-        onClose={() => setIsStudentAreaOpen(false)} 
-      />
-      <LiveClassModal 
-        isOpen={isLiveClassOpen}
-        onClose={() => setIsLiveClassOpen(false)}
-      />
-      <RobotCreationModal 
-        isOpen={isRobotCreationOpen}
-        onClose={() => setIsRobotCreationOpen(false)}
-      />
-
-      {/* Footer Resource Modals */}
-      <RoadmapModal isOpen={isRoadmapOpen} onClose={() => setIsRoadmapOpen(false)} />
-      <CommunityModal isOpen={isCommunityOpen} onClose={() => setIsCommunityOpen(false)} />
-      <CertificateModal isOpen={isCertificateOpen} onClose={() => setIsCertificateOpen(false)} />
-      <BlogModal isOpen={isBlogOpen} onClose={() => setIsBlogOpen(false)} />
-      <ServerStatusModal isOpen={isStatusOpen} onClose={() => setIsStatusOpen(false)} />
+      
+      {user && (
+        <>
+          <EmentaModal 
+            isOpen={isStudentAreaOpen} 
+            onClose={() => setIsStudentAreaOpen(false)} 
+          />
+          <LiveClassModal 
+            isOpen={isLiveClassOpen}
+            onClose={() => setIsLiveClassOpen(false)}
+          />
+          <RobotCreationModal 
+            isOpen={isRobotCreationOpen}
+            onClose={() => setIsRobotCreationOpen(false)}
+          />
+          {/* Footer Resource Modals */}
+          <RoadmapModal isOpen={isRoadmapOpen} onClose={() => setIsRoadmapOpen(false)} />
+          <CommunityModal isOpen={isCommunityOpen} onClose={() => setIsCommunityOpen(false)} />
+          <CertificateModal isOpen={isCertificateOpen} onClose={() => setIsCertificateOpen(false)} />
+          <BlogModal isOpen={isBlogOpen} onClose={() => setIsBlogOpen(false)} />
+          <ServerStatusModal isOpen={isStatusOpen} onClose={() => setIsStatusOpen(false)} />
+        </>
+      )}
 
     </div>
   );
